@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en" data-theme="luxury" data-lavish-annotate="off">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EKKO — Morning flow concept</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/daisyui.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/themes.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.2.4/dist/index.global.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box}
+    :where(.grid,.flex,.layout-grid,.layout-flex)>*,:where([style*="display:grid"],[style*="display: flex"],[style*="display:flex"])>*{min-width:0}
+    :where(p,h1,h2,h3,h4,h5,h6,li,dd,blockquote,figcaption,td,th,.badge,.label){overflow-wrap:anywhere}
+    :where(img,svg,video,canvas,iframe){max-width:100%;height:auto}
+    :root{--ink:#292f2d;--muted:#747b75;--paper:#f4f4ef;--card:#fffefa;--line:#e5e8df;--green:#386c5c;--mint:#e2efe8;--orange:#d77f4c}
+    html{background:var(--paper);color:var(--ink);scroll-behavior:smooth}
+    body{margin:0;background:radial-gradient(ellipse at 12% 0%,#e8eee5 0,transparent 36rem),var(--paper);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;color:var(--ink)}
+    button,input{font:inherit}
+    .wrap{width:min(1160px,100% - 32px);margin:auto;padding:32px 0 64px}
+    .eyebrow{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--green);font-weight:750}
+    .hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.72fr);gap:32px;align-items:end;margin:10px 0 26px}
+    h1{font-size:clamp(2.2rem,6vw,4.4rem);line-height:.98;letter-spacing:-.06em;margin:.35rem 0 1rem;font-weight:750}
+    .lede{font-size:1.1rem;line-height:1.55;color:#5c655e;max-width:59ch;margin:0}
+    .notice{background:#f8f0df;border:1px solid #eadab5;border-radius:18px;padding:16px 18px;font-size:.88rem;line-height:1.5;color:#65553d}
+    .journey{display:flex;gap:8px;overflow:auto;padding:3px 1px 14px;margin-bottom:10px;scrollbar-width:thin}
+    .journey button{flex:1;min-width:max-content;border:1px solid var(--line);background:#ffffff9c;border-radius:999px;padding:10px 15px;color:#68716a;cursor:pointer;font-size:.85rem}
+    .journey button.active{background:var(--green);color:white;border-color:var(--green)}
+    .stage{display:grid;grid-template-columns:minmax(300px,.88fr) minmax(0,1.12fr);gap:24px;align-items:start}
+    .phone{background:#111714;border-radius:38px;padding:10px;max-width:405px;margin:auto;width:100%;box-shadow:0 24px 70px #22352e2a}
+    .phone-inner{background:#f8f8f3;border-radius:30px;min-height:676px;padding:16px 18px 22px;position:relative;overflow:hidden}
+    .island{height:21px;width:92px;border-radius:16px;background:#111714;margin:-8px auto 16px}
+    .phone-head{display:flex;justify-content:space-between;align-items:center;font-size:.75rem;color:#657068;margin:0 2px 24px}
+    .phone-head strong{color:#2d3731;font-size:.8rem}
+    .phone h2{font-size:1.8rem;line-height:1.05;letter-spacing:-.045em;margin:0 0 9px}
+    .phone .sub{font-size:.88rem;line-height:1.45;color:#70786f;margin:0 0 20px}
+    .phone-panel{background:white;border:1px solid #e9ebe4;border-radius:20px;padding:16px;margin-bottom:12px}
+    .soft{background:#e9f2ec}
+    .app-row,.task-row,.person{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid #edf0e9}
+    .app-row:last-child,.task-row:last-child,.person:last-child{border-bottom:0;padding-bottom:0}
+    .app-icon{width:36px;height:36px;border-radius:12px;background:#f0e5dd;display:grid;place-items:center;font-weight:800;color:#914f37;flex:none}
+    .app-icon.tiktok{background:#e8eaf2;color:#33384a}.app-icon.mail{background:#e3eee8;color:#36705b}
+    .row-copy{min-width:0;flex:1}.row-copy b{display:block;font-size:.88rem}.row-copy small{display:block;color:#879088;font-size:.74rem;margin-top:2px}.friend-streak{display:inline-block;color:#8a5b31;font-size:.72rem;font-weight:750;margin-left:5px;white-space:normal}
+    .task-check{width:23px;height:23px;accent-color:var(--green);flex:none}
+    .progress-line{height:8px;background:#e6e9e2;border-radius:20px;overflow:hidden;margin:13px 0 8px}.progress-line span{height:100%;display:block;background:#4f876f;border-radius:20px;transition:width .25s ease}
+    .progress-meta{display:flex;justify-content:space-between;color:#727b73;font-size:.76rem}
+    .phone-btn{display:block;width:100%;padding:13px;border:0;border-radius:14px;background:var(--green);color:#fff;font-weight:700;cursor:pointer;margin-top:12px}
+    .phone-btn:disabled{background:#cbd2cb;color:#6b756c;cursor:not-allowed}
+    .phone-link{width:100%;background:none;border:0;color:#577568;padding:12px 5px;cursor:pointer;font-size:.83rem;font-weight:650}
+    .screen{display:none}.screen.active{display:block}
+    .status-pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#e7f1eb;color:#386c5c;padding:6px 10px;font-size:.72rem;font-weight:700;margin-bottom:13px}
+    .shield{background:#25382f;color:white;border-radius:23px;padding:19px 17px;margin-top:22px}
+    .shield .mini{color:#b8d0c1;font-size:.77rem}.shield h3{font-size:1.35rem;margin:8px 0}.shield p{color:#d2dfd6;font-size:.84rem;line-height:1.45}
+    .friend-bubble{background:#f0f3ec;border-radius:16px 16px 16px 4px;padding:12px;font-size:.84rem;line-height:1.45}
+    .screen-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .phone-choice{border:1px solid #e2e6df;background:white;border-radius:14px;padding:10px;text-align:left;cursor:pointer;font-size:.78rem;color:#546158}
+    .phone-choice.selected{border-color:#629079;background:#e8f2eb;color:#315e4e}
+    .caption{font-size:.74rem;color:#7b847c;line-height:1.4;margin-top:9px}
+    .side h2{font-size:1.3rem;margin:0 0 7px;letter-spacing:-.025em}.side>p{font-size:.9rem;color:#737c74;line-height:1.5;margin:0 0 16px}
+    .side-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;margin-bottom:14px;box-shadow:0 6px 20px #2e423309}
+    .side-card h3{font-size:1rem;margin:0 0 8px}.side-card p{font-size:.87rem;line-height:1.5;color:#69736a;margin:0}
+    .side-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.side-actions .btn{border-radius:999px}
+    .progress{display:block;width:100%;height:7px;accent-color:#4f876f}
+    .section{margin-top:60px;scroll-margin-top:18px}.section-top{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:18px}.section h2{font-size:clamp(1.6rem,4vw,2.4rem);letter-spacing:-.045em;margin:4px 0}.section-intro{max-width:60ch;color:#6f786f;line-height:1.5;margin:0}
+    .compare{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.compare-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;min-width:0}.compare-card.recommended{border-color:#8aab96;box-shadow:0 0 0 2px #d8e8dd}.compare-card h3{font-size:1rem;margin:10px 0 6px}.compare-card p{font-size:.83rem;line-height:1.45;color:#687269;margin:0}.compare-card .trade{margin-top:12px;padding-top:11px;border-top:1px solid var(--line);font-size:.77rem;color:#7b6450}
+    .inspo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.inspo-card{background:#e9eee7;border-radius:18px;padding:16px;min-width:0}.inspo-card b{display:block;font-size:.95rem;margin-bottom:6px}.inspo-card p{font-size:.8rem;line-height:1.45;color:#626e65;margin:0}.tag{display:inline-block;font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:#456957;font-weight:750}
+    .decision{background:#fffefa;border:1px solid #d8e1d8;border-radius:25px;padding:clamp(18px,3vw,30px);box-shadow:0 14px 36px #2e42330c}.decision-head{display:flex;justify-content:space-between;gap:14px;align-items:start;margin-bottom:17px}.decision-head p{color:#6a746b;margin:5px 0 0;line-height:1.45;max-width:65ch;font-size:.9rem}.question{border-top:1px solid #e9ece5;padding:17px 0}.question h3{font-size:.97rem;margin:0 0 10px}.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.option{display:flex;align-items:flex-start;gap:9px;border:1px solid #e6e9e1;border-radius:13px;padding:10px 11px;cursor:pointer;font-size:.82rem;line-height:1.35;color:#58645b;background:#fff}.option:has(input:checked){border-color:#70977e;background:#edf4ee;color:#315c49}.option input{accent-color:var(--green);margin-top:2px;flex:none}.recommend{font-size:.75rem;color:#47715b;font-weight:700;margin:7px 0 0}.queue-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid #e9ece5;padding-top:17px}.queue-status{font-size:.82rem;color:#70796f}.queue-status b{color:#344f41}.market-flow{margin-top:18px;background:#e8eee7;border-radius:20px;padding:18px}
+    .flow-svg{width:100%;display:block}.footer-note{font-size:.8rem;color:#7d857e;line-height:1.5;margin-top:28px;border-top:1px solid #dfe4dc;padding-top:18px}
+    @media(max-width:780px){.wrap{width:min(100% - 22px,600px);padding-top:22px}.hero{grid-template-columns:1fr;gap:15px}.stage{grid-template-columns:1fr}.phone{max-width:390px}.side{order:2}.compare{grid-template-columns:1fr}.inspo{grid-template-columns:repeat(2,minmax(0,1fr))}.section-top{display:block}.section-intro{margin-top:8px}}
+    @media(max-width:420px){.wrap{width:calc(100% - 18px)}.phone{padding:7px;border-radius:30px}.phone-inner{padding:15px 14px 19px;border-radius:24px;min-height:640px}.options{grid-template-columns:1fr}.inspo{grid-template-columns:1fr}.journey{margin-right:-8px}.decision-head{display:block}}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <header class="hero">
+    <div><div class="eyebrow">EKKO · morning flow / concept 01</div><h1>A softer start,<br>by design.</h1><p class="lede">A morning-first routine with a small friend nudge: finish your chosen steps, then make the distracting apps available.</p></div>
+    <aside class="notice"><strong>Prototype boundary.</strong> Every screen here is a concept. The “OS shield” is illustrative only: this browser demo does not block phone apps. The parallel iOS investigation still needs to verify installation, distribution, authorization, and enforcement feasibility.</aside>
+  </header>
+  <nav class="journey" aria-label="Prototype screens">
+    <button class="active" data-screen="setup">1 · Set up</button><button data-screen="routine">2 · Morning</button><button data-screen="shield">3 · Shield</button><button data-screen="friends">4 · Friend nudge</button><button data-screen="exception">5 · Exception</button>
+  </nav>
+  <div class="stage">
+    <section class="phone" aria-label="Interactive iPhone screen prototype">
+      <div class="phone-inner"><div class="island"></div><div class="phone-head"><span>9:41</span><strong>EKKO</strong><span>●●● ◖</span></div>
+        <div class="screen active" id="screen-setup">
+          <span class="status-pill">✦ Your morning, your rules</span><h2>What should wait<br>until you’re ready?</h2><p class="sub">Choose apps to pause at 4:00 each morning. Required steps unlock them; optional steps can be skipped.</p>
+          <div class="phone-panel">
+            <label class="app-row"><span class="app-icon">◎</span><span class="row-copy"><b>Instagram</b><small>Selected to pause</small></span><input class="checkbox checkbox-sm" type="checkbox" checked data-app="Instagram" aria-label="Select Instagram"></label>
+            <label class="app-row"><span class="app-icon tiktok">♪</span><span class="row-copy"><b>TikTok</b><small>Selected to pause</small></span><input class="checkbox checkbox-sm" type="checkbox" checked data-app="TikTok" aria-label="Select TikTok"></label>
+            <label class="app-row"><span class="app-icon mail">✉</span><span class="row-copy"><b>Mail</b><small>Always available</small></span><input class="checkbox checkbox-sm" type="checkbox" data-app="Mail" aria-label="Select Mail"></label>
+          </div>
+          <div class="phone-panel"><b style="font-size:.85rem">Build your morning plan</b><p class="caption">Choose which steps are required to unlock apps. Optional steps can be skipped.</p>
+            <label class="app-row"><span class="row-copy"><b>Brush teeth</b></span><select class="select select-bordered select-sm" data-step-rule="brush" aria-label="Brush teeth requirement"><option value="required" selected>Required</option><option value="optional">Optional</option></select></label>
+            <label class="app-row"><span class="row-copy"><b>Get ready</b></span><select class="select select-bordered select-sm" data-step-rule="get-ready" aria-label="Get ready requirement"><option value="required" selected>Required</option><option value="optional">Optional</option></select></label>
+            <label class="app-row"><span class="row-copy"><b>Skincare</b></span><select class="select select-bordered select-sm" data-step-rule="skincare" aria-label="Skincare requirement"><option value="required">Required</option><option value="optional" selected>Optional</option></select></label>
+          </div>
+          <div class="phone-panel soft"><b style="font-size:.85rem">Daily app pause · 4:00 am</b><p style="font-size:.78rem;color:#66756b;line-height:1.4;margin:6px 0 11px">Selected apps wait until required steps are complete or you manually override.</p><label style="display:flex;align-items:center;gap:10px"><input id="all-apps-wake" class="checkbox checkbox-sm" type="checkbox"><span class="row-copy"><b style="font-size:.83rem">Explore all-apps-on-wake</b><small id="scope-note">Only if iOS supports reliable wake detection and all-app shielding</small></span></label></div>
+          <button class="phone-btn" data-go="routine">Save my morning →</button><p class="caption">The 4:00 am pause ends after required steps or a manual override.</p>
+        </div>
+        <div class="screen" id="screen-routine">
+          <span class="status-pill" id="routine-status">🔥 5-day streak · in progress</span><h2>Good morning,<br>Sam.</h2><p class="sub">A few small steps before the scroll. Required steps unlock your apps; optional steps can be skipped.</p>
+          <div class="phone-panel"><div class="progress-meta"><span>Today’s routine</span><b id="task-count">0 of 2 required done</b></div><div class="progress-line"><span id="task-progress" style="width:0%"></span></div>
+            <label class="task-row"><input class="task-check" data-step="brush" data-required="true" type="checkbox"><span class="row-copy"><b>Brush teeth</b><small data-step-label>Required · about 2 minutes</small></span></label>
+            <label class="task-row"><input class="task-check" data-step="get-ready" data-required="true" type="checkbox"><span class="row-copy"><b>Get ready</b><small data-step-label>Required · take your time</small></span></label>
+            <label class="task-row"><input class="task-check" data-step="skincare" data-required="false" type="checkbox"><span class="row-copy"><b>Skincare</b><small data-step-label>Optional · skip if you like</small></span></label>
+          </div>
+          <div class="phone-panel soft"><b style="font-size:.83rem">Your chosen apps stay paused</b><p style="font-size:.78rem;color:#66756b;line-height:1.4;margin:6px 0 0">The block began at 4:00 am. Finish your tasks to release apps, or choose a manual override. Your five completed mornings are a streak; a checklist tap is self-reported, not proof.</p></div>
+          <button class="phone-btn" id="unlock-button" data-go="shield" disabled>Finish required steps to continue</button><button class="phone-link" data-go="exception">Need access now? View exception</button>
+        </div>
+        <div class="screen" id="screen-shield">
+          <span class="status-pill">✓ Routine marked complete</span><h2>Morning first.<br>Then the feed.</h2><p class="sub">Here’s an illustrative handoff to an iOS app shield.</p>
+          <div class="shield"><div class="mini">EKKO · ILLUSTRATIVE OS SHIELD</div><h3>Your morning is complete</h3><p>Instagram and TikTok can now be available. EKKO would request supported iOS controls; this concept screen does not enforce a block.</p><div style="border-top:1px solid #ffffff2c;padding-top:12px;margin-top:14px;display:flex;align-items:center;gap:10px"><span class="app-icon">◎</span><div><b style="font-size:.84rem">Instagram</b><div class="mini">Ready to open</div></div></div></div>
+          <button class="phone-btn" data-go="friends">See your friend circle →</button><button class="phone-link" data-go="routine">Back to routine</button>
+        </div>
+        <div class="screen" id="screen-friends">
+          <span class="status-pill">♡ A little encouragement</span><h2>You’ve got<br>company.</h2><p class="sub">A small circle can cheer you on without seeing your app activity.</p>
+          <div class="phone-panel"><div class="person"><div class="app-icon" style="border-radius:50%;background:#eadbcc;color:#805f40">J</div><div class="row-copy"><b>Jamie <span class="friend-streak">🔥 6-day streak</span></b><small>Completed today · shared by choice</small></div><span style="color:#d08452">✦</span></div><div class="friend-bubble">“That’s a lovely start. Rooting for you today 🌿”</div><div class="person" style="padding-top:14px"><div class="app-icon" style="border-radius:50%;background:#dce7ed;color:#486174">A</div><div class="row-copy"><b>Alex <span class="friend-streak">🔥 3-day streak</span></b><small>Completed today</small></div><span style="color:#75877e">○</span></div></div>
+          <div class="phone-panel soft"><b style="font-size:.82rem">Your sharing</b><p id="sharing-copy" style="font-size:.78rem;color:#66756b;margin:5px 0 0">Friends see who completed today and their current streak. No app usage or task list.</p></div>
+          <button class="phone-btn" id="send-note">Send Jamie a little encouragement</button><p class="caption" id="note-status" role="status" aria-live="polite"></p><button class="phone-btn" data-go="exception">What if I miss a morning? →</button><button class="phone-link" data-go="setup">Edit your setup</button>
+        </div>
+        <div class="screen" id="screen-exception">
+          <span class="status-pill" style="background:#f6edde;color:#876744">↗ A gentle fallback</span><h2>Real life<br>happens.</h2><p class="sub">The 4:00 am pause ends when required steps are done. Temporary recovery details are still undecided.</p>
+          <div class="phone-panel"><div class="screen-choices"><button class="phone-choice selected" data-exception="pass">Temporary override<br><small>Duration and allowance TBD</small></button><button class="phone-choice" data-exception="bypass">Bypass today<br><small>Ends your current streak</small></button></div></div>
+          <div class="phone-panel soft"><b style="font-size:.84rem">If you miss your start</b><p style="font-size:.78rem;color:#66756b;line-height:1.4;margin:6px 0 0">A deliberate full-day bypass ends the streak. What happens after an unplanned missed morning is still undecided; temporary override rules are also open.</p></div>
+          <button class="phone-btn" id="exception-action">Explore temporary override</button><button class="phone-link" data-go="routine">Back to the routine</button>
+        </div>
+      </div>
+    </section>
+    <aside class="side">
+      <div class="side-card"><span class="tag">Journey map</span><h2>One calm loop.</h2><p>Set a morning boundary → make progress visible → reach a clearly labeled shield state → invite a low-pressure friend moment → recover without shame.</p>
+        <svg class="flow-svg" viewBox="0 0 640 142" role="img" aria-label="Journey from setup through routine, shield, friend encouragement, and exception"><title>Five steps in the EKKO morning journey</title><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="currentColor"/></marker></defs><path d="M66 57H572" fill="none" stroke="#8da799" stroke-width="2" marker-end="url(#arrow)"/><g fill="#fffefa" stroke="#7c9f8a" stroke-width="2"><circle id="node-setup" cx="70" cy="57" r="25"/><circle id="node-routine" cx="195" cy="57" r="25"/><circle id="node-shield" cx="320" cy="57" r="25"/><circle id="node-friends" cx="445" cy="57" r="25"/><circle id="node-exception" cx="570" cy="57" r="25"/></g><g fill="#315c49" font-size="12" text-anchor="middle" font-family="sans-serif"><text x="70" y="61">1</text><text x="195" y="61">2</text><text x="320" y="61">3</text><text x="445" y="61">4</text><text x="570" y="61">5</text></g><g fill="#56645a" font-size="11" text-anchor="middle" font-family="sans-serif"><text x="70" y="108">Set up</text><text x="195" y="108">Routine</text><text x="320" y="108">Shield</text><text x="445" y="108">Friend</text><text x="570" y="108">Exception</text></g></svg>
+      </div>
+      <div class="side-card"><span class="tag">Try the prototype</span><h3>Choose a screen, then interact.</h3><p>Change app selection, tick required or optional steps, visit the shield when required steps are checked, send a supportive note, then view the open recovery choices. State is local to this page and resets on refresh.</p><div class="side-actions"><button class="btn btn-sm btn-outline" data-go="setup">Start at setup</button><button class="btn btn-sm btn-outline" data-go="routine">Jump to routine</button></div></div>
+      <div class="side-card"><span class="tag">Prototype rule</span><h3>Self-report, with clarity.</h3><p>Required steps advance progress and gate the illustrative unlock; optional steps can be skipped. This self-report does not prove an activity happened.</p></div>
+    </aside>
+  </div>
+
+  <section class="section" id="strictness">
+    <div class="section-top"><div><div class="eyebrow">Pattern comparison</div><h2>How firm should the boundary feel?</h2></div><p class="section-intro">Market patterns suggest a range from gentle friction to task-first gating. The middle path is a starting recommendation; the owner’s preference remains open.</p></div>
+    <div class="compare">
+      <article class="compare-card"><span class="badge badge-outline">A · Gentle</span><h3>Delay, then choose</h3><p>Each app open gets a short pause and “Do you want to continue?” prompt. No routine needed to proceed.</p><div class="trade">✓ Easy recovery, low setup · △ Less reliable against autopilot</div></article>
+      <article class="compare-card recommended"><span class="badge badge-success">B · Best fit to explore</span><h3>Routine unlock + bounded pass</h3><p>Selected apps wait for required steps. A temporary release could relock afterward; its duration and allowance remain open product choices.</p><div class="trade">✓ Morning is meaningfully protected · △ Self-report and recovery rules need clear trust boundaries</div></article>
+      <article class="compare-card"><span class="badge badge-outline">C · Strict</span><h3>Hard schedule + no same-day edit</h3><p>Routine gate stays in place through a latest-unlock time; changes take effect tomorrow. Emergency route stays visible.</p><div class="trade">✓ Stronger friction · △ More setup, higher risk when the block misfires</div></article>
+    </div>
+  </section>
+
+  <section class="section" id="inspiration">
+    <div class="section-top"><div><div class="eyebrow">Market inspiration</div><h2>Borrow the useful shape.</h2></div><p class="section-intro">These references change the morning in distinct ways. EKKO can adapt the interaction without inheriting every tradeoff.</p></div>
+    <div class="inspo">
+      <article class="inspo-card"><span class="tag">Do First</span><b>Task-first gate</b><p>Turn a morning list into the access condition. Adapt the clear “what’s left?” progress; preserve honesty that a tap is self-report.</p></article>
+      <article class="inspo-card"><span class="tag">Jomo</span><b>Complete Habits + Squads</b><p>Make user-defined steps unlock apps and friends encourage. Share completion and streak by choice; keep app activity and routine details private.</p></article>
+      <article class="inspo-card"><span class="tag">Lockit</span><b>Checklist + temporary release</b><p>Use a custom list and bounded pass with relock. Keep the recovery rule legible; avoid making exceptions feel punitive.</p></article>
+      <article class="inspo-card"><span class="tag">ScreenZen</span><b>Delay + strict modes</b><p>Offer a lighter “pause and decide” mode and a firmer mode later. More friction adds configuration and recovery complexity.</p></article>
+    </div>
+  </section>
+
+  <section class="section" id="decisions">
+    <div class="section-top"><div><div class="eyebrow">Captain review · product direction</div><h2>What should EKKO feel like?</h2></div><p class="section-intro">Confirmed directions are marked; the remaining open questions are called out below. Selections stay local until explicitly queued.</p></div>
+
+    <form class="decision" id="decision-form" data-lavish-question="ekko-product-directions">
+      <div class="decision-head"><div><span class="badge badge-primary badge-outline">Captain’s product direction</span><p>Confirmed directions are shown as current choices. Use the open controls to react to unresolved details; nothing queues until you submit this card.</p></div><span class="badge badge-soft">one consolidated card</span></div>
+      <div class="question"><h3>1. What counts as completing the routine?</h3><div class="options"><label class="option"><input type="radio" name="completion" value="Required steps gate; optional steps may be skipped; users assign each step" checked disabled><span><b>Required + optional · current direction</b><br>People mark each step required or optional; required steps gate completion.</span></label><label class="option"><input type="radio" name="completion" value="Every listed step required" disabled><span><b>Every listed step required</b><br>No optional steps.</span></label></div><div class="recommend">Recommendation: retain the current direction; it gives people control while keeping a clear completion rule.</div></div>
+      <div class="question"><h3>2. Which apps should wait?</h3><div class="options"><label class="option"><input type="radio" name="scope" value="Selected apps only" checked><span><b>Selected apps only · prototype default</b><br>Choose specific apps to pause.</span></label><label class="option"><input type="radio" name="scope" value="All apps on detected wake, if iOS supports it"><span><b>Explore all apps on wake</b><br>Conditional on reliable wake detection and supported shielding.</span></label></div><div class="recommend">Recommendation: keep selected apps as the default; defer all-apps-on-wake until feasibility is known.</div></div>
+      <div class="question"><h3>3. When does the morning pause start?</h3><div class="options"><label class="option"><input type="radio" name="start" value="Daily at 4:00 AM; until required routine completion or manual override" checked disabled><span><b>Daily at 4:00 a.m. · current direction</b><br>Chosen apps pause until required steps are complete or the user manually overrides.</span></label><label class="option"><input type="radio" name="start" value="User manually starts the pause" disabled><span><b>Manual start</b><br>User decides when each day begins.</span></label></div><div class="recommend">Recommendation: retain the daily 4:00 a.m. start already chosen.</div></div>
+      <div class="question"><h3>4. What do friends see, and what tone should encouragement use?</h3><div class="options"><label class="option"><input type="radio" name="friends" value="Completion and current streak; recommend warm, opt-in encouragement" checked><span><b>Current visibility + warm tone · recommendation</b><br>Friends see who completed today and their current streak; no app use or routine details. Tone remains open.</span></label><label class="option"><input type="radio" name="friends" value="Completed today and current streak; playful encouragement"><span><b>Completion + streak · playful</b><br>Same limited visibility, lighter copy.</span></label><label class="option"><input type="radio" name="friends" value="Completed today and current streak; accountability-forward prompts"><span><b>Completion + streak · more accountability</b><br>Same shared facts, more direct nudges.</span></label><label class="option"><input type="radio" name="friends" value="Keep completion and streak private"><span><b>Private by default</b><br>Show no completion or streak to friends.</span></label></div><div class="recommend">Current direction: completed friends and their current streak. Recommendation: keep sharing discreet and supportive; the exact tone is open for review.</div></div>
+      <div class="question"><h3>5. How should exceptions and missed mornings work?</h3><div class="options"><label class="option"><input type="radio" name="exception" value="No policy chosen; compare temporary override and other recovery patterns" checked><span><b>No policy chosen · compare recovery patterns</b><br>Temporary release/relock is a candidate; duration, allowance, and missed-day behavior remain open.</span></label><label class="option"><input type="radio" name="exception" value="No temporary release; only full-day bypass"><span><b>No temporary release</b><br>Keep only a deliberate full-day bypass.</span></label><label class="option"><input type="radio" name="exception" value="Friend-approved exception"><span><b>Friend-approved exception</b><br>Ask a friend before temporary access.</span></label><label class="option"><input type="radio" name="exception" value="Hard block until a chosen deadline"><span><b>Strict hold until a deadline</b><br>Higher friction; recovery path still needed.</span></label></div><div class="recommend">Known: a deliberate full-day bypass ends the streak. Recommendation: explore a clear temporary override, but decide its rules and unplanned missed-day behavior separately.</div></div>
+      <div class="question"><h3>6. Should EKKO ask for optional proof?</h3><div class="options"><label class="option"><input type="radio" name="proof" value="No proof; checklist completion is self-reported" checked disabled><span><b>No proof · current direction</b><br>Private, low-friction self-report; a tap does not establish that a task happened.</span></label><label class="option"><input type="radio" name="proof" value="Optional private reflection only" disabled><span><b>Private reflection only</b><br>Not shared and not treated as verification.</span></label><label class="option"><input type="radio" name="proof" value="Optional user-supplied photo or link" disabled><span><b>User-supplied photo or link</b><br>Extra personal data, still not verification.</span></label></div><div class="recommend">Recommendation: keep proof out of the first concept; it adds privacy and setup costs without verifying completion.</div></div>
+      <div class="queue-row"><button class="btn btn-primary" type="submit">Queue selected answers</button><button class="btn btn-ghost" type="button" id="reset-decisions">Reset to recommendations</button><span id="queue-status" class="queue-status" role="status" aria-live="polite"><b>Selected, not queued.</b> Use the button to queue this consolidated card.</span></div>
+    </form>
+
+  </section>
+  <p class="footer-note">Open: temporary override/recovery details, unplanned missed-morning behavior, pricing timing, and whether iOS can support an all-apps-on-wake mode. Market references: Do First task-first gating; Jomo Complete Habits and Squads; Lockit custom checklist and temporary release/relock; ScreenZen delay and strict modes. This concept is not an implementation or a feasibility claim. iOS install, distribution, permissions, and enforcement remain with the parallel technical investigation.</p>
+</main>
+<script>
+(() => {
+  const navButtons=[...document.querySelectorAll('.journey button')];
+  function showScreen(name){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='screen-'+name));
+    navButtons.forEach(b=>b.classList.toggle('active',b.dataset.screen===name));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  navButtons.forEach(b=>b.addEventListener('click',()=>showScreen(b.dataset.screen)));
+  document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>showScreen(b.dataset.go)));
+  document.querySelectorAll('[data-app]').forEach(input=>input.addEventListener('change',()=>{
+    input.closest('.app-row').querySelector('small').textContent=input.checked?'Selected to pause':'Always available';
+  }));
+  document.getElementById('all-apps-wake').addEventListener('change',e=>{
+    document.getElementById('scope-note').textContent=e.currentTarget.checked
+      ?'Exploration option selected; reliable wake detection and all-app shielding are unverified.'
+      :'Only if iOS supports reliable wake detection and all-app shielding';
+    const scopeValue=e.currentTarget.checked?'All apps on detected wake, if iOS supports it':'Selected apps only';
+    const scopeChoice=document.querySelector(`#decision-form input[name=scope][value="${scopeValue}"]`);
+    if(scopeChoice){scopeChoice.checked=true;document.getElementById('decision-form').dispatchEvent(new Event('change',{bubbles:true}));}
+  });
+  document.getElementById('send-note').addEventListener('click',e=>{
+    document.getElementById('note-status').textContent='Sent: “I’m rooting for you today 🌿”';
+    e.currentTarget.textContent='Encouragement sent ✓';
+    e.currentTarget.disabled=true;
+  });
+  let streakEnded=false;
+  const allChecks=[...document.querySelectorAll('.task-check')], count=document.getElementById('task-count'), bar=document.getElementById('task-progress'), unlock=document.getElementById('unlock-button');
+  function refresh(){const requiredChecks=allChecks.filter(x=>x.dataset.required==='true'), n=requiredChecks.filter(x=>x.checked).length, complete=requiredChecks.length>0&&n===requiredChecks.length;count.textContent=`${n} of ${requiredChecks.length} required done`;bar.style.width=requiredChecks.length?`${n/requiredChecks.length*100}%`:'100%';unlock.disabled=requiredChecks.length>0&&!complete;unlock.textContent=requiredChecks.length===0?'No required steps · view shield →':complete?'Routine complete · view shield →':`Finish required steps to continue · ${n}/${requiredChecks.length}`;document.getElementById('routine-status').textContent=streakEnded?'Streak ended · next completed morning restarts it':requiredChecks.length===0?'No required steps · streak unchanged':complete?'🔥 6-day streak · complete':'🔥 5-day streak · in progress';}
+  allChecks.forEach(c=>c.addEventListener('change',refresh));
+  document.querySelectorAll('[data-step-rule]').forEach(select=>select.addEventListener('change',()=>{
+    const task=document.querySelector(`.task-check[data-step="${select.dataset.stepRule}"]`);
+    if(!task)return;
+    task.dataset.required=select.value==='required'?'true':'false';
+    const label=task.closest('.task-row').querySelector('[data-step-label]');
+    if(label)label.textContent=select.value==='required'?'Required · complete this step':'Optional · skip if you like';
+    refresh();
+  }));
+  document.querySelectorAll('[data-exception]').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('[data-exception]').forEach(x=>x.classList.toggle('selected',x===b));
+    document.getElementById('exception-action').textContent=b.dataset.exception==='pass'?'Explore temporary override':'Bypass today and end my streak';
+  }));
+  document.getElementById('exception-action').addEventListener('click',e=>{
+    const isPass=document.querySelector('[data-exception].selected')?.dataset.exception==='pass';
+    e.currentTarget.textContent=isPass?'Temporary override selected · details TBD':'Bypassed today · streak ended';
+    if(!isPass){streakEnded=true;document.getElementById('routine-status').textContent='Streak ended · next completed morning restarts it';}
+    e.currentTarget.disabled=true;
+  });
+  document.getElementById('decision-form').addEventListener('change',()=>{
+    document.getElementById('queue-status').innerHTML='<b>Selection updated · not queued.</b> Submit the card when ready.';
+  });
+  document.getElementById('decision-form').addEventListener('submit',e=>{
+    e.preventDefault();
+    const answers={};
+    ['completion','scope','start','friends','exception','proof'].forEach(k=>answers[k]=e.currentTarget.querySelector(`input[name="${k}"]:checked`)?.value??'Not specified');
+    const lines=Object.entries(answers).map(([k,v])=>`${k}: ${v}`).join('; ');
+    if(window.lavish?.queuePrompt){
+      window.lavish.queuePrompt(`EKKO product direction review: ${lines}. Keep confirmed directions as recorded; route changed selections as captain feedback, not implementation instructions. Preserve the iOS feasibility caveat.`,{tag:'choice',text:'EKKO product direction · consolidated review',element:e.currentTarget,data:{question:'ekko-product-directions',answers}});
+      document.getElementById('queue-status').innerHTML='<b>Queued.</b> Consolidated product feedback queued.';
+    } else {
+      document.getElementById('queue-status').innerHTML='<b>Not queued.</b> Open this page in Lavish to send the selected answers.';
+    }
+  });
+  document.getElementById('reset-decisions').addEventListener('click',()=>{
+    document.querySelectorAll('#decision-form input[type=radio]').forEach(i=>i.checked=i.defaultChecked);
+    document.getElementById('queue-status').innerHTML='<b>Selected, not queued.</b> Recommendations restored.';
+  });
+  refresh();
+})();
+</script>
+</body>
+</html>
