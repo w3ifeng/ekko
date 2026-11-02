@@ -28,7 +28,7 @@ private extension Color {
     }
 }
 
-private struct RoutineStep: Identifiable {
+private struct RoutineStep: Identifiable, Codable, Equatable {
     let id: UUID
     var title: String
     var detail: String
@@ -44,14 +44,6 @@ private struct RoutineStep: Identifiable {
         self.required = required
         self.done = done
     }
-}
-
-private struct MorningApp: Identifiable {
-    let id: String
-    let name: String
-    let glyph: String
-    let tint: Color
-    var selected: Bool
 }
 
 private enum EkkoTab: String, CaseIterable {
@@ -73,54 +65,47 @@ struct EkkoApp: App {
 }
 
 private struct EkkoRootView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var backend = EkkoBackend()
     @State private var selectedTab: EkkoTab = .today
-    @State private var hasSetUp = false
-    @State private var showShield = false
-    @State private var showPeek = false
-    @State private var peekUntil = Date()
+    @StateObject private var screenTime = ScreenTimeController()
+    @AppStorage("ekko.setup.complete", store: EkkoScreenTime.defaults) private var hasSetUp = false
+    @AppStorage("ekko.streak", store: EkkoScreenTime.defaults) private var streak = 0
+    @AppStorage("ekko.routine.steps", store: EkkoScreenTime.defaults) private var savedSteps = Data()
+    @AppStorage("ekko.routine.day", store: EkkoScreenTime.defaults) private var savedRoutineDay = ""
     @State private var showAccessSheet = false
     @State private var accessChoice = "peek"
     @State private var showCelebration = false
-    @State private var streak = 5
-    @State private var streakEnded = false
-    @State private var didWake = false
     @State private var notice: String?
-    @AppStorage("ekko.peekUsedDay") private var peekUsedDay = ""
     @State private var steps = [
         RoutineStep("Brush teeth", "About 2 min", "drop.fill", required: true),
         RoutineStep("Glass of water", "Before coffee", "waterbottle.fill", required: true),
         RoutineStep("Get ready", "Take your time", "tshirt.fill", required: true),
         RoutineStep("Skincare", "Skip if you like", "sparkles", required: false)
     ]
-    @State private var apps = [
-        MorningApp(id: "instagram", name: "Instagram", glyph: "Ig", tint: EkkoPalette.clay, selected: true),
-        MorningApp(id: "tiktok", name: "TikTok", glyph: "Tt", tint: EkkoPalette.sky, selected: true),
-        MorningApp(id: "youtube", name: "YouTube", glyph: "Yt", tint: EkkoPalette.lilac, selected: false),
-        MorningApp(id: "mail", name: "Mail", glyph: "Ma", tint: EkkoPalette.mint, selected: false)
-    ]
-
     private var requiredCount: Int { steps.filter(\.required).count }
     private var requiredDone: Int { steps.filter { $0.required && $0.done }.count }
     private var allRequiredDone: Bool { requiredCount > 0 && requiredDone == requiredCount }
-    private var peekUsedToday: Bool { peekUsedDay == ekkoDayKey() }
+    private var todayKey: String { EkkoScreenTime.dayKey() }
+    private var didWake: Bool { EkkoScreenTime.defaults.string(forKey: EkkoScreenTime.completedDayKey) == todayKey }
+    private var streakEnded: Bool { EkkoScreenTime.defaults.string(forKey: EkkoScreenTime.skippedDayKey) == todayKey }
+    private var peekUsedToday: Bool { EkkoScreenTime.defaults.string(forKey: EkkoScreenTime.peekDayKey) == todayKey }
 
     var body: some View {
         ZStack(alignment: .top) {
             EkkoPalette.paper.ignoresSafeArea()
             if !hasSetUp {
-                PlanScreen(apps: $apps, steps: $steps, setup: true) {
+                PlanScreen(screenTime: screenTime, steps: $steps, setup: true) {
+                    guard screenTime.isAuthorized, screenTime.selectionCount > 0 else { return }
                     hasSetUp = true
+                    savedRoutineDay = todayKey
+                    saveSteps()
+                    screenTime.activate()
                     selectedTab = .today
                     toast("See you at 5:00 am")
                 }
-            } else if showShield {
-                ShieldPreview(steps: steps, peek: showPeek, peekUntil: peekUntil) {
-                    showShield = false
-                    showPeek = false
-                }
             } else if showCelebration {
-                UnlockedScreen(apps: apps, streak: streak) {
+                UnlockedScreen(appCount: screenTime.selectionCount, streak: streak) {
                     showCelebration = false
                     selectedTab = .circle
                 } backToday: {
@@ -131,27 +116,23 @@ private struct EkkoRootView: View {
                 Group {
                     switch selectedTab {
                     case .today:
-                        TodayScreen(steps: $steps, apps: apps, streak: streak, streakEnded: streakEnded,
-                                    done: allRequiredDone, didWake: didWake,
-                                    onWake: {
-                                        guard allRequiredDone, !streakEnded, !didWake else { return }
-                                        didWake = true
-                                        streak += 1
-                                        Task { await backend.recordOutcome("completed") }
-                                        showCelebration = true
-                                    }, onAccess: {
+                        TodayScreen(steps: $steps, appCount: screenTime.selectionCount,
+                                    streak: streak, streakEnded: streakEnded, done: allRequiredDone,
+                                    didWake: didWake, enforcing: screenTime.isEnforcing,
+                                    accessEnabled: screenTime.isEnforcing,
+                                    onRoutineChanged: routineChanged,
+                                    onWake: { showCelebration = true }, onAccess: {
                                         accessChoice = peekUsedToday ? "skip" : "peek"
                                         showAccessSheet = true
-                                    }, onShield: {
-                                        showShield = true
-                                        showPeek = false
                                     })
                     case .circle:
                         CircleScreen(backend: backend)
                     case .plan:
-                        PlanScreen(apps: $apps, steps: $steps, setup: false) {
+                        PlanScreen(screenTime: screenTime, steps: $steps, setup: false) {
+                            saveSteps()
+                            screenTime.refreshEnforcement()
                             selectedTab = .today
-                            toast("Plan saved for tomorrow")
+                            toast("Plan saved")
                         }
                     }
                 }
@@ -169,19 +150,30 @@ private struct EkkoRootView: View {
             }
         }
         .preferredColorScheme(.light)
+        .task {
+            if let restored = try? JSONDecoder().decode([RoutineStep].self, from: savedSteps) { steps = restored }
+            resetRoutineForNewDay()
+            screenTime.refreshAuthorization()
+        }
+        .onChange(of: scenePhase) { phase in
+            guard phase == .active else { return }
+            resetRoutineForNewDay()
+            screenTime.refreshAuthorization()
+        }
+        .onChange(of: steps) { _ in routineChanged() }
+        .onChange(of: screenTime.selection) { _ in screenTime.refreshEnforcement() }
         .sheet(isPresented: $showAccessSheet) {
             AccessSheet(choice: $accessChoice, streak: streak, peekUsed: peekUsedToday) { choice in
                 showAccessSheet = false
                 if choice == "skip" {
-                    streakEnded = true
                     streak = 0
+                    screenTime.skipToday(for: todayKey)
                     Task { await backend.recordOutcome("skipped") }
                     toast("Skipped today. Fresh start tomorrow.")
                 } else {
-                    peekUsedDay = ekkoDayKey()
-                    peekUntil = Date().addingTimeInterval(10 * 60)
-                    showPeek = true
-                    showShield = true
+                    screenTime.startPeek(for: todayKey)
+                    if let error = screenTime.errorMessage { toast("Couldn’t start your peek: \(error)") }
+                    else { toast("Your 10-minute peek has started.") }
                 }
             }
             .presentationDetents([.medium, .large])
@@ -196,22 +188,33 @@ private struct EkkoRootView: View {
         }
     }
 
-    private func ekkoDayKey() -> String {
-        let day = Calendar.current.date(byAdding: .hour, value: -5, to: Date()) ?? Date()
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.calendar = Calendar.current
-        formatter.timeZone = TimeZone.current
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.string(from: day)
+    private func saveSteps() {
+        if let data = try? JSONEncoder().encode(steps) { savedSteps = data }
+    }
+
+    private func resetRoutineForNewDay() {
+        guard savedRoutineDay != todayKey else { return }
+        for index in steps.indices { steps[index].done = false }
+        savedRoutineDay = todayKey
+        saveSteps()
+    }
+
+    private func routineChanged() {
+        saveSteps()
+        guard hasSetUp, allRequiredDone, !didWake, !streakEnded else { return }
+        screenTime.completeRoutine(for: todayKey)
+        streak += 1
+        Task { await backend.recordOutcome("completed") }
+        showCelebration = true
     }
 }
 
 private struct PlanScreen: View {
-    @Binding var apps: [MorningApp]
+    @ObservedObject var screenTime: ScreenTimeController
     @Binding var steps: [RoutineStep]
     let setup: Bool
     let onSave: () -> Void
+    @State private var showingAppPicker = false
 
     var body: some View {
         ScrollView {
@@ -219,7 +222,7 @@ private struct PlanScreen: View {
                 HStack {
                     Text("ekko").font(.system(size: 26, weight: .heavy, design: .rounded)).tracking(-1.5).foregroundStyle(EkkoPalette.moss)
                     Spacer()
-                    Text(setup ? "YOUR FIRST MORNING" : "CHANGES START TOMORROW")
+                    Text(setup ? "YOUR FIRST MORNING" : "CHANGES APPLY NOW")
                         .font(.system(size: 10, weight: .bold, design: .rounded)).tracking(1.1)
                         .foregroundStyle(EkkoPalette.muted)
                 }.padding(.bottom, 20)
@@ -229,16 +232,35 @@ private struct PlanScreen: View {
                 Text("Choose which apps sleep at 5:00 am. They wake when your required steps are done, or you use one 10-minute peek or choose Skip today.")
                     .font(.system(size: 15)).foregroundStyle(EkkoPalette.muted).lineSpacing(3).padding(.top, 8).padding(.bottom, 20)
                 Card {
-                    VStack(spacing: 0) {
-                        ForEach(apps.indices, id: \.self) { index in
-                            HStack(spacing: 12) {
-                                AppTile(glyph: apps[index].glyph, tint: apps[index].tint)
-                                Text(apps[index].name).font(.system(size: 16, weight: .semibold)).foregroundStyle(EkkoPalette.ink)
-                                Spacer(minLength: 4)
-                                Toggle("Pause \(apps[index].name)", isOn: $apps[index].selected).labelsHidden().tint(EkkoPalette.moss)
-                                    .accessibilityLabel("Include \(apps[index].name) in morning pause")
-                            }.padding(.vertical, 9)
-                            if index != apps.count - 1 { Divider().overlay(EkkoPalette.border).padding(.leading, 50) }
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "moon.zzz.fill").font(.system(size: 17)).foregroundStyle(EkkoPalette.moss)
+                                .frame(width: 38, height: 38).background(EkkoPalette.mint, in: RoundedRectangle(cornerRadius: 12))
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Apps to sleep").font(.system(size: 15, weight: .semibold)).foregroundStyle(EkkoPalette.ink)
+                                Text("\(screenTime.selectionCount) selected").font(.system(size: 12)).foregroundStyle(EkkoPalette.muted)
+                            }
+                            Spacer()
+                            if screenTime.isAuthorized && screenTime.errorMessage == nil {
+                                Button("Choose") { showingAppPicker = true }
+                                    .font(.system(size: 13, weight: .semibold)).foregroundStyle(EkkoPalette.moss)
+                            }
+                        }
+                        if !screenTime.isAuthorized {
+                            Text("Screen Time access is off, so EKKO cannot put apps to sleep.")
+                                .font(.system(size: 12)).foregroundStyle(EkkoPalette.muted)
+                            Button {
+                                Task { await screenTime.requestAuthorization() }
+                            } label: {
+                                Label("Turn on Screen Time access", systemImage: "lock.shield")
+                                    .font(.system(size: 14, weight: .semibold)).foregroundStyle(EkkoPalette.moss)
+                            }.buttonStyle(.plain)
+                        } else if let error = screenTime.errorMessage {
+                            Text("Screen Time isn’t enforcing right now: \(error)")
+                                .font(.system(size: 12)).foregroundStyle(Color(hex: 0xB4483A))
+                        } else {
+                            Text("Choose individual apps only. Leave EKKO unchecked so your routine stays available.")
+                                .font(.system(size: 12)).foregroundStyle(EkkoPalette.muted)
                         }
                     }
                 }
@@ -286,24 +308,30 @@ private struct PlanScreen: View {
                         .font(.system(size: 16, weight: .semibold)).foregroundStyle(.white).padding(.horizontal, 18).frame(height: 54)
                         .background(EkkoPalette.moss, in: RoundedRectangle(cornerRadius: 15))
                 }.buttonStyle(.plain)
-                    .disabled(!apps.contains(where: \.selected) || !steps.contains(where: \.required))
-                    .opacity(apps.contains(where: \.selected) && steps.contains(where: \.required) ? 1 : 0.45)
+                    .disabled(!screenTime.isAuthorized || screenTime.errorMessage != nil || screenTime.selectionCount == 0 || !steps.contains(where: \.required))
+                    .opacity(screenTime.isAuthorized && screenTime.errorMessage == nil && screenTime.selectionCount > 0 && steps.contains(where: \.required) ? 1 : 0.45)
                     .padding(.top, 18).padding(.bottom, 25)
             }.padding(.horizontal, 18).padding(.top, 14)
         }.background(EkkoPalette.paper.ignoresSafeArea())
+            .familyActivityPicker(isPresented: $showingAppPicker, selection: Binding(
+                get: { screenTime.selection },
+                set: { screenTime.saveSelection($0) }
+            ))
     }
 }
 
 private struct TodayScreen: View {
     @Binding var steps: [RoutineStep]
-    let apps: [MorningApp]
+    let appCount: Int
     let streak: Int
     let streakEnded: Bool
     let done: Bool
     let didWake: Bool
+    let enforcing: Bool
+    let accessEnabled: Bool
+    let onRoutineChanged: () -> Void
     let onWake: () -> Void
     let onAccess: () -> Void
-    let onShield: () -> Void
     private var count: Int { steps.filter(\.required).count }
     private var checked: Int { steps.filter { $0.required && $0.done }.count }
     private var remaining: Int { count - checked }
@@ -311,7 +339,7 @@ private struct TodayScreen: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                SunriseHero(progress: count == 0 ? 0 : Double(checked) / Double(count), appCount: apps.filter(\.selected).count, awakeToday: streakEnded || didWake, title: "Good morning,", subtitle: "Sam.")
+                SunriseHero(progress: count == 0 ? 0 : Double(checked) / Double(count), appCount: appCount, awakeToday: streakEnded || didWake, screenTimeReady: enforcing, title: "Good morning,", subtitle: "Sam.")
                     .padding(.horizontal, 0)
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(alignment: .center) {
@@ -332,6 +360,7 @@ private struct TodayScreen: View {
                             ForEach(steps.indices, id: \.self) { index in
                                 Button {
                                     withAnimation(.spring(response: 0.3, dampingFraction: 0.72)) { steps[index].done.toggle() }
+                                    onRoutineChanged()
                                 } label: {
                                     HStack(spacing: 12) {
                                         Image(systemName: steps[index].done ? "checkmark.circle.fill" : steps[index].symbol)
@@ -356,10 +385,10 @@ private struct TodayScreen: View {
                             .background(done && !streakEnded ? EkkoPalette.yolk : EkkoPalette.moss.opacity(streakEnded ? 0.45 : 1), in: RoundedRectangle(cornerRadius: 15))
                     }.buttonStyle(.plain).disabled(!done || streakEnded || didWake).padding(.top, 15)
                     HStack(spacing: 2) {
-                        Button("Need access now?", action: onAccess).buttonStyle(GhostButton())
-                        Button("Preview the shield", action: onShield).buttonStyle(GhostButton())
+                        Button(accessEnabled ? "Need access now?" : "Screen Time access needed", action: onAccess)
+                            .buttonStyle(GhostButton()).disabled(!accessEnabled)
                     }.frame(maxWidth: .infinity).padding(.top, 2).padding(.bottom, 25)
-                    Text("Selected apps: \(apps.filter(\.selected).map(\.name).joined(separator: ", "))")
+                    Text(enforcing ? (didWake || streakEnded ? "Selected apps are available until 5:00 am." : "\(appCount) selected apps are set to sleep.") : "Screen Time isn’t enforcing. Check access in Plan.")
                         .font(.system(size: 11)).foregroundStyle(EkkoPalette.muted).lineLimit(2).padding(.bottom, 8)
                 }.padding(.horizontal, 18).padding(.top, 18)
             }
@@ -598,50 +627,15 @@ private struct AccessSheet: View {
     }
 }
 
-private struct ShieldPreview: View {
-    let steps: [RoutineStep]
-    let peek: Bool
-    let peekUntil: Date
-    let onBack: () -> Void
-    var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
-            if peek {
-                TimelineView(.periodic(from: .now, by: 1)) { context in
-                    let seconds = max(0, Int(peekUntil.timeIntervalSince(context.date)))
-                    Text(String(format: "%d:%02d", seconds / 60, seconds % 60))
-                        .font(.system(size: 76, weight: .bold, design: .rounded)).tracking(-4).foregroundStyle(EkkoPalette.yolk)
-                }
-                Text("One 10-minute peek today. This countdown is a preview; it does not control app access.")
-                    .font(.system(size: 16)).foregroundStyle(Color(hex: 0xC9DACF)).multilineTextAlignment(.center).padding(.top, 12).frame(maxWidth: 290)
-            } else {
-                AppTile(glyph: "Tt", tint: EkkoPalette.mossDark, size: 78, dark: true).padding(.bottom, 22)
-                SmallPill(text: "SHIELD PREVIEW", tint: Color.white.opacity(0.12), foreground: Color(hex: 0xC9DACF))
-                Text("TikTok’s still\nasleep.").font(.system(size: 38, weight: .bold, design: .rounded)).tracking(-1.1).multilineTextAlignment(.center).foregroundStyle(.white).padding(.top, 18)
-                let left = steps.filter { $0.required && !$0.done }
-                Text(left.isEmpty ? "Your routine’s done. Return to ekko to continue." : "\(left.count) required \(left.count == 1 ? "step" : "steps") left: \(left.map { $0.title.lowercased() }.joined(separator: ", ")).")
-                    .font(.system(size: 15)).foregroundStyle(Color(hex: 0xC9DACF)).multilineTextAlignment(.center).padding(.top, 12).frame(maxWidth: 290)
-            }
-            Spacer()
-            Button(action: onBack) {
-                Text(peek ? "End preview" : "Open my routine").font(.system(size: 16, weight: .semibold)).foregroundStyle(EkkoPalette.mossDeep)
-                    .frame(maxWidth: .infinity).frame(height: 54).background(EkkoPalette.card, in: RoundedRectangle(cornerRadius: 15))
-            }.buttonStyle(.plain)
-            Text("Illustrative preview only. No app blocking or Screen Time enforcement is active.").font(.system(size: 11)).foregroundStyle(.white.opacity(0.55)).multilineTextAlignment(.center).padding(.top, 14)
-        }.padding(.horizontal, 24).padding(.top, 60).padding(.bottom, 34).frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(RadialGradient(colors: [EkkoPalette.moss, EkkoPalette.mossDeep], center: .center, startRadius: 25, endRadius: 470).ignoresSafeArea())
-    }
-}
-
 private struct UnlockedScreen: View {
-    let apps: [MorningApp]
+    let appCount: Int
     let streak: Int
     let onCircle: () -> Void
     let backToday: () -> Void
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                SunriseHero(progress: 1, appCount: apps.filter(\.selected).count, title: "Morning first.", subtitle: "Then the feed.")
+                SunriseHero(progress: 1, appCount: appCount, awakeToday: true, title: "Morning first.", subtitle: "Then the feed.")
                 VStack(spacing: 12) {
                     Card {
                         HStack {
@@ -657,7 +651,8 @@ private struct UnlockedScreen: View {
                     }
                     Card {
                         Text("AWAKE NOW").font(.system(size: 10, weight: .bold)).tracking(1).foregroundStyle(EkkoPalette.muted).padding(.bottom, 10)
-                        ForEach(apps.filter(\.selected)) { app in HStack(spacing: 9) { AppTile(glyph: app.glyph, tint: app.tint, size: 32); Text(app.name).font(.system(size: 14, weight: .semibold)).foregroundStyle(EkkoPalette.ink) }.padding(.vertical, 3) }
+                        Text("Your \(appCount) selected \(appCount == 1 ? "app is" : "apps are") available for today.")
+                            .font(.system(size: 14, weight: .semibold)).foregroundStyle(EkkoPalette.ink)
                     }
                     Button(action: onCircle) {
                         HStack(spacing: 11) {
@@ -681,6 +676,7 @@ private struct SunriseHero: View {
     let progress: Double
     let appCount: Int
     var awakeToday = false
+    var screenTimeReady = false
     let title: String
     let subtitle: String
     var body: some View {
@@ -690,7 +686,7 @@ private struct SunriseHero: View {
                     .frame(width: 190, height: 190).offset(x: 190, y: 92 - CGFloat(progress) * 50)
             }
             VStack(alignment: .leading, spacing: 0) {
-                SmallPill(text: awakeToday ? "APPS AWAKE FOR TODAY" : progress >= 1 ? "APPS CAN WAKE UP" : "\(appCount) APPS ASLEEP SINCE 5:00", tint: Color.white.opacity(0.15), foreground: .white)
+                SmallPill(text: awakeToday ? "APPS AWAKE FOR TODAY" : screenTimeReady ? "\(appCount) APPS SET TO SLEEP" : "SCREEN TIME NOT ACTIVE", tint: Color.white.opacity(0.15), foreground: .white)
                     .padding(.bottom, 17)
                 Text(title).font(.system(size: title.hasPrefix("Good") ? 33 : 32, weight: .bold, design: .rounded)).tracking(-1.3).foregroundStyle(.white)
                 Text(subtitle).font(.system(size: title.hasPrefix("Good") ? 33 : 28, weight: .bold, design: .rounded)).tracking(-1.2).foregroundStyle(EkkoPalette.yolk)
