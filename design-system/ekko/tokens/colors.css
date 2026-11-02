@@ -1,0 +1,47 @@
+:root{
+/* Paper — warm off-whites (from prototype --paper / --card) */
+--paper-0:#fffefa;--paper-50:#f8f8f3;--paper-100:#f4f4ef;--paper-200:#ecede5;--paper-300:#e5e8df;--paper-400:#d8e1d8;
+/* Ink — green-tinted greys (from --ink / --muted) */
+--ink-900:#292f2d;--ink-700:#4a534d;--ink-500:#747b75;--ink-400:#879088;--ink-300:#a9b0a8;
+/* Moss — the brand green */
+--moss-950:#17241e;--moss-900:#1f3029;--moss-800:#25382f;--moss-700:#315c49;--moss-600:#386c5c;--moss-500:#4f876f;--moss-300:#8aab96;--moss-200:#cfe2d6;--moss-100:#e2efe8;--moss-50:#edf4ee;
+/* Ember — sunrise orange (from --orange) */
+--ember-700:#8a5b31;--ember-600:#b8653a;--ember-500:#d77f4c;--ember-300:#eeb48f;--ember-100:#f8e6da;
+/* Yolk — first light */
+--yolk-500:#e9ad2f;--yolk-400:#f2c14e;--yolk-200:#f8dd96;--yolk-100:#fbf0cf;
+/* Friend tints (from prototype avatars) */
+--clay-200:#eadbcc;--clay-700:#805f40;--sky-200:#dce7ed;--sky-700:#486174;--lilac-200:#e4def0;--lilac-700:#5e5378;
+/* Status */
+--danger-600:#b4483a;--danger-100:#f6e1dc;--sand-100:#f8f0df;--sand-300:#eadab5;--sand-700:#65553d;
+
+/* Semantic */
+--bg-app:var(--paper-100);
+--surface-screen:var(--paper-50);
+--surface-card:var(--paper-0);
+--surface-soft:var(--moss-100);
+--surface-muted:var(--paper-200);
+--surface-night:var(--moss-800);
+--surface-night-deep:var(--moss-950);
+--surface-sunrise:var(--yolk-100);
+--border-subtle:var(--paper-300);
+--border-strong:var(--paper-400);
+--border-on-night:#ffffff2c;
+--text-1:var(--ink-900);
+--text-2:var(--ink-700);
+--text-3:var(--ink-500);
+--text-on-night:#ffffff;
+--text-on-night-2:#c9dacf;
+--text-accent:var(--moss-700);
+--accent:var(--moss-600);
+--accent-hover:var(--moss-700);
+--accent-press:var(--moss-800);
+--accent-soft:var(--moss-100);
+--on-accent:#ffffff;
+--streak:var(--ember-500);
+--streak-text:var(--ember-700);
+--sun-core:var(--yolk-400);
+--sun-edge:var(--ember-500);
+--disabled-bg:#cbd2cb;
+--disabled-fg:#6b756c;
+--focus-ring:0 0 0 3px #8aab9666;/* @kind shadow */
+}

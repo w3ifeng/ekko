@@ -1,0 +1,5 @@
+html{background:var(--bg-app);color:var(--text-1)}
+body{margin:0;font:var(--type-body);color:var(--text-1);-webkit-font-smoothing:antialiased}
+a{color:var(--text-accent);text-decoration:none;font-weight:var(--fw-semibold)}
+a:hover{color:var(--accent-press);text-decoration:underline;text-underline-offset:3px}
+[class^="icon-"],[class*=" icon-"]{line-height:1;display:inline-block}

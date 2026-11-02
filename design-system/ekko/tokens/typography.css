@@ -1,0 +1,21 @@
+:root{
+--font-display:"Bricolage Grotesque",-apple-system,"SF Pro Display",system-ui,sans-serif;
+--font-body:"Figtree",-apple-system,"SF Pro Text",system-ui,sans-serif;
+--font-accent:"Instrument Serif",Georgia,serif;
+--fw-regular:400;/* @kind font */--fw-medium:550;/* @kind font */--fw-semibold:650;/* @kind font */--fw-bold:750;/* @kind font */--fw-black:800;/* @kind font */
+/* Scale (px, mobile-first) */
+--fs-hero:56px;--fs-display:44px;--fs-title:30px;--fs-heading:22px;--fs-subhead:17px;--fs-body:15px;--fs-small:13px;--fs-caption:12px;--fs-eyebrow:11px;
+--lh-tight:.98;/* @kind font */--lh-snug:1.08;/* @kind font */--lh-normal:1.45;/* @kind font */--lh-relaxed:1.55;/* @kind font */
+--tracking-display:-.05em;/* @kind font */--tracking-title:-.045em;/* @kind font */--tracking-heading:-.025em;/* @kind font */--tracking-eyebrow:.16em;/* @kind font */
+/* Semantic */
+--type-hero:var(--fw-bold) var(--fs-hero)/var(--lh-tight) var(--font-display);
+--type-display:var(--fw-bold) var(--fs-display)/var(--lh-tight) var(--font-display);
+--type-title:var(--fw-bold) var(--fs-title)/var(--lh-snug) var(--font-display);
+--type-heading:var(--fw-bold) var(--fs-heading)/1.15 var(--font-display);
+--type-subhead:var(--fw-semibold) var(--fs-subhead)/1.3 var(--font-body);
+--type-body:var(--fw-regular) var(--fs-body)/var(--lh-normal) var(--font-body);
+--type-label:var(--fw-semibold) var(--fs-body)/1.25 var(--font-body);
+--type-small:var(--fw-regular) var(--fs-small)/1.4 var(--font-body);
+--type-caption:var(--fw-medium) var(--fs-caption)/1.35 var(--font-body);
+--type-eyebrow:var(--fw-bold) var(--fs-eyebrow)/1 var(--font-body);
+}

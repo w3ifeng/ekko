@@ -1,0 +1,4 @@
+/* Substitutes: prototype used the iOS system stack (SF Pro). Google Fonts picks below; swap for licensed files when available. */
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Figtree:ital,wght@0,400..800;1,400..600&family=Instrument+Serif:ital@0;1&display=swap");
+/* Icons: Lucide icon font (CDN). Use <i class="icon-sun"></i>. */
+@import url("https://unpkg.com/lucide-static@0.469.0/font/lucide.css");

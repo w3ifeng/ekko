@@ -1,0 +1,7 @@
+:root{
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-7:32px;--space-8:40px;--space-9:56px;
+--screen-pad-x:18px;--screen-pad-top:16px;--row-pad-y:11px;--row-gap:11px;
+--radius-xs:8px;--radius-sm:12px;--radius-md:14px;--radius-lg:20px;--radius-xl:24px;--radius-2xl:30px;--radius-device:38px;--radius-pill:999px;
+--bubble-radius:16px 16px 16px 4px;/* @kind radius */
+--hit-min:44px;/* @kind spacing */
+}

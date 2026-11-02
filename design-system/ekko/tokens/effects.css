@@ -1,0 +1,20 @@
+:root{
+--shadow-card:0 6px 20px #2e423309;
+--shadow-raised:0 14px 36px #2e42330c;
+--shadow-float:0 18px 40px #1f302924;
+--shadow-device:0 24px 70px #22352e2a;
+--shadow-sun:0 0 60px #f2c14e80;
+--ring-selected:0 0 0 2px #d8e8dd;
+--glow-dawn:radial-gradient(ellipse at 12% 0%,#e8eee5 0,transparent 36rem);/* @kind color */
+--glow-sunrise:radial-gradient(circle at 50% 110%,#f8dd96 0,#fbf0cf 38%,transparent 70%);/* @kind color */
+--glow-night:radial-gradient(circle at 50% 120%,#386c5c55 0,transparent 60%);/* @kind color */
+--sun-fill:radial-gradient(circle at 50% 40%,#fbe29a 0,#f2c14e 45%,#d77f4c 100%);/* @kind color */
+--blur-glass:saturate(1.4) blur(18px);/* @kind other */
+--glass-light:#fffefacc;/* @kind color */
+--glass-night:#1f3029b3;/* @kind color */
+--ease-out:cubic-bezier(.2,.8,.2,1);/* @kind other */
+--ease-spring:cubic-bezier(.34,1.56,.64,1);/* @kind other */
+--ease-sun:cubic-bezier(.65,0,.35,1);/* @kind other */
+--dur-fast:120ms;/* @kind other */--dur-base:250ms;/* @kind other */--dur-slow:600ms;/* @kind other */--dur-sun:1200ms;/* @kind other */
+--press-scale:.97;/* @kind other */
+}
