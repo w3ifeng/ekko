@@ -7,11 +7,13 @@
 
 /* Begin PBXBuildFile section */
 		A10000000000000000000001 /* EkkoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* EkkoApp.swift */; };
+		A10000000000000000000002 /* AuthBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* AuthBackend.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A20000000000000000000001 /* EkkoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EkkoApp.swift; sourceTree = "<group>"; };
 		A20000000000000000000002 /* Ekko.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ekko.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000003 /* AuthBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthBackend.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,7 +31,7 @@
 		};
 		A40000000000000000000002 /* Ekko */ = {
 			isa = PBXGroup;
-			children = (A20000000000000000000001 /* EkkoApp.swift */,);
+			children = (A20000000000000000000001 /* EkkoApp.swift */, A20000000000000000000003 /* AuthBackend.swift */,);
 			path = Ekko;
 			sourceTree = "<group>";
 		};
@@ -79,7 +81,7 @@
 		A60000000000000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
-			files = (A10000000000000000000001 /* EkkoApp.swift in Sources */,);
+			files = (A10000000000000000000001 /* EkkoApp.swift in Sources */, A10000000000000000000002 /* AuthBackend.swift in Sources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
@@ -87,8 +89,8 @@
 /* Begin XCBuildConfiguration section */
 		A80000000000000000000001 /* Debug project */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; COPY_PHASE_STRIP = NO; DEBUG_INFORMATION_FORMAT = dwarf; ENABLE_STRICT_OBJC_MSGSEND = YES; GCC_C_LANGUAGE_STANDARD = gnu17; GCC_OPTIMIZATION_LEVEL = 0; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SDKROOT = iphoneos; SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)"; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; }; name = Debug; };
 		A80000000000000000000002 /* Release project */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; COPY_PHASE_STRIP = NO; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; ENABLE_NS_ASSERTIONS = NO; ENABLE_STRICT_OBJC_MSGSEND = YES; GCC_C_LANGUAGE_STANDARD = gnu17; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SDKROOT = iphoneos; SWIFT_COMPILATION_MODE = wholemodule; SWIFT_OPTIMIZATION_LEVEL = "-O"; }; name = Release; };
-		A80000000000000000000003 /* Debug target */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = ekko; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; PRODUCT_BUNDLE_IDENTIFIER = com.ekko.morning; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
-		A80000000000000000000004 /* Release target */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = ekko; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; PRODUCT_BUNDLE_IDENTIFIER = com.ekko.morning; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
+		A80000000000000000000003 /* Debug target */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; EK_APPLE_SIGN_IN_ENABLED = 0; EK_SUPABASE_PUBLISHABLE_KEY = ""; EK_SUPABASE_URL = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_EK_APPLE_SIGN_IN_ENABLED = "$(EK_APPLE_SIGN_IN_ENABLED)"; INFOPLIST_KEY_EK_SUPABASE_PUBLISHABLE_KEY = "$(EK_SUPABASE_PUBLISHABLE_KEY)"; INFOPLIST_KEY_EK_SUPABASE_URL = "$(EK_SUPABASE_URL)"; INFOPLIST_KEY_CFBundleDisplayName = ekko; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; PRODUCT_BUNDLE_IDENTIFIER = com.ekko.morning; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
+		A80000000000000000000004 /* Release target */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; EK_APPLE_SIGN_IN_ENABLED = 0; EK_SUPABASE_PUBLISHABLE_KEY = ""; EK_SUPABASE_URL = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_EK_APPLE_SIGN_IN_ENABLED = "$(EK_APPLE_SIGN_IN_ENABLED)"; INFOPLIST_KEY_EK_SUPABASE_PUBLISHABLE_KEY = "$(EK_SUPABASE_PUBLISHABLE_KEY)"; INFOPLIST_KEY_EK_SUPABASE_URL = "$(EK_SUPABASE_URL)"; INFOPLIST_KEY_CFBundleDisplayName = ekko; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; PRODUCT_BUNDLE_IDENTIFIER = com.ekko.morning; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */

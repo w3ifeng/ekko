@@ -1,6 +1,6 @@
 # EKKO local Supabase backend
 
-This is a setup and operating guide for the planned backend. The repository contains Supabase configuration and local migrations, but no app client or hosted Supabase project. The migrations have not been applied and the local backend has not been started. This guide does not create a hosted project or deploy anything.
+This is a setup and operating guide for the native Supabase client. The repository contains the Auth/REST client and local migrations, but no hosted Supabase project. The migrations have not been applied and the local backend has not been started. This guide does not create a hosted project or deploy anything.
 
 ## What belongs in the backend
 
@@ -28,6 +28,15 @@ supabase start
 supabase status
 supabase stop
 ```
+
+After `supabase start`, read the local API URL and publishable `anon` key from `supabase status`. Supply them to Xcode as build settings; they are intentionally not stored in the project:
+
+```sh
+xcodebuild -project ios/Ekko.xcodeproj -scheme Ekko -destination 'platform=iOS Simulator,name=<installed iPhone simulator>' \
+  EK_SUPABASE_URL=http://127.0.0.1:54321 EK_SUPABASE_PUBLISHABLE_KEY='<local-anon-key>' build
+```
+
+Use the actual simulator name installed on your machine. A publishable/anon key is designed for client use and is safe to ship when RLS is enabled. Never use a secret or service-role key in Xcode or the app. The app stores its refreshable Auth session in the iOS Keychain; routine content and Screen Time settings remain on-device.
 
 `start` brings up the local stack and applies migrations and seed data; `stop` stops it while preserving local database data. To discard and recreate the local database from the checked-in migration chain and seed data, use:
 
@@ -65,6 +74,17 @@ The mobile app may contain a Supabase publishable key because it is designed for
 Require authentication for sharing actions. Users should opt in before their profile appears in the friend feed and be able to leave a group or turn sharing off. Invitations should be random, single-purpose, time-limited, and stored server-side only as hashes; redeeming one should be authenticated and should not grant access beyond joining its group. RLS should prevent reading other groups or unshared profiles.
 
 Account deletion should remove or detach the user's profile, memberships, invitations they own, and daily outcomes according to the product's retention policy; provide a deliberate deletion path and do not keep sharing data after deletion without a documented reason. Do not upload routines, routine steps, schedules, app selections, app-control tokens, or gate state.
+
+Email sign-in uses Supabase Auth's email OTP endpoints. To deliver a numeric one-time code, the hosted project's Magic Link email template must contain `{{ .Token }}` (for example, “Your ekko sign-in code is {{ .Token }}”). See Supabase's [passwordless email guide](https://supabase.com/docs/guides/auth/auth-email-passwordless) and [custom SMTP guide](https://supabase.com/docs/guides/auth/auth-smtp). Supabase's default email sender is rate-limited for testing; a real-user launch needs an owner-configured SMTP provider and verified sender domain in Supabase. Provide the Supabase project URL and publishable key to the app as build settings. No SMTP credentials belong in this repository or app.
+
+Sign in with Apple is implemented behind the `EK_APPLE_SIGN_IN_ENABLED` build setting, which defaults off. Enabling it requires a paid Apple Developer Program membership to turn on the Sign in with Apple capability for the `com.ekko.morning` App ID and provision a matching development/distribution profile. The owner must also configure Apple's provider in Supabase Auth using the [native Apple setup](https://supabase.com/docs/guides/auth/social-sign-in/auth-apple) and the Apple identifiers/key material Supabase requests. Without those steps, email OTP continues to work and the Apple button stays hidden. This task has not changed Apple or Supabase account settings.
+
+## Owner inputs for hosted launch
+
+- Supabase project URL and publishable key, plus approval to apply the reviewed migrations to that project.
+- Custom SMTP host, port, username, password, verified sender address/domain, and the numeric-code email template.
+- If Apple sign-in is desired: paid Apple Developer membership, the app capability and profiles, and the Apple identifiers/key material needed for Supabase's Apple provider.
+- A distribution decision and Apple Developer membership for TestFlight or App Store delivery.
 
 ## iOS distribution
 
