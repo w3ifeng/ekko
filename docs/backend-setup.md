@@ -1,12 +1,12 @@
 # EKKO local Supabase backend
 
-This is a setup and operating guide for the planned backend. The repository currently has no Supabase configuration, migrations, app client, or hosted Supabase project. The local backend has not been run: this workspace has neither the Supabase CLI nor Docker/a Docker-compatible runtime. This guide does not create a hosted project or deploy anything.
+This is a setup and operating guide for the planned backend. The repository contains Supabase configuration and local migrations, but no app client or hosted Supabase project. The migrations have not been applied and the local backend has not been started. This guide does not create a hosted project or deploy anything.
 
 ## What belongs in the backend
 
 Supabase Auth and Postgres with row-level security (RLS) provide authenticated identities and enforce access to the small amount of data needed for optional friend sharing. RLS should scope reads and writes to the signed-in user and the groups they belong to; clients must not rely on UI checks for access control.
 
-Keep routines, private step names, schedules, selected apps and their control tokens, gate state, and personal completion history on the device. The backend stores only sharing data and the daily outcome needed for a friend feed. A planned local schema, owned by the parallel Supabase implementation task, consists of:
+Keep routines, private step names, schedules, selected apps and their control tokens, gate state, and personal completion history on the device. The backend stores only sharing data and the daily outcome needed for a friend feed. The checked-in local schema consists of:
 
 - `profiles` for a display name and sharing-consent state;
 - `groups` and group memberships for friend circles;
@@ -19,9 +19,9 @@ Streak behavior is based on explicit outcomes: a completed outcome increments th
 
 ## Local prerequisites and workflow
 
-Local Supabase development requires the Supabase CLI and a running Docker-compatible runtime. Follow Supabase's [CLI installation guide](https://supabase.com/docs/guides/local-development/cli/getting-started) for the supported setup for your machine. Supabase's local development workflow is [documented here](https://supabase.com/docs/guides/local-development/cli-workflows). The CLI is not installed in this workspace and no container runtime is available, so these commands are instructions for when prerequisites are installed; the local backend cannot currently be started here.
+Local Supabase development requires the Supabase CLI and a running Docker-compatible runtime. Follow Supabase's [CLI installation guide](https://supabase.com/docs/guides/local-development/cli/getting-started) for the supported setup for your machine. Supabase's local development workflow is [documented here](https://supabase.com/docs/guides/local-development/cli-workflows). These commands start the local stack and apply migrations; the local backend has not been started in this workspace.
 
-From the repository root, once the Supabase implementation has added its configuration and migrations:
+From the repository root, when you are ready to start the local Supabase stack:
 
 ```sh
 supabase start
