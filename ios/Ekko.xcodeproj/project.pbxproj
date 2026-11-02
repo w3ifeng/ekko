@@ -7,95 +7,73 @@
 
 /* Begin PBXBuildFile section */
 		A10000000000000000000001 /* EkkoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* EkkoApp.swift */; };
-		A10000000000000000000002 /* AuthBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* AuthBackend.swift */; };
+		A10000000000000000000006 /* AuthBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* AuthBackend.swift */; };
+		A10000000000000000000002 /* ScreenTimeSupport.swift in App Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* ScreenTimeSupport.swift */; };
+		A10000000000000000000003 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* DeviceActivityMonitorExtension.swift */; };
+		A10000000000000000000004 /* ScreenTimeSupport.swift in Monitor Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* ScreenTimeSupport.swift */; };
+		A10000000000000000000005 /* EkkoMonitorExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* EkkoMonitorExtension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A50000000000000000000003 /* Monitor extension proxy */ = {isa = PBXContainerItemProxy; containerPortal = A70000000000000000000001 /* Project object */; proxyType = 1; remoteGlobalIDString = A50000000000000000000002; remoteInfo = EkkoMonitorExtension; };
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A60000000000000000000003 /* Embed App Extensions */ = {isa = PBXCopyFilesBuildPhase; buildActionMask = 2147483647; dstPath = ""; dstSubfolderSpec = 13; files = (A10000000000000000000005 /* EkkoMonitorExtension.appex in Embed App Extensions */,); name = "Embed App Extensions"; runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		A20000000000000000000001 /* EkkoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EkkoApp.swift; sourceTree = "<group>"; };
 		A20000000000000000000002 /* Ekko.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ekko.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A20000000000000000000003 /* AuthBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthBackend.swift; sourceTree = "<group>"; };
+		A20000000000000000000003 /* ScreenTimeSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTimeSupport.swift; sourceTree = "<group>"; };
+		A20000000000000000000004 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
+		A20000000000000000000005 /* EkkoMonitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = wrapper.app-extension; includeInIndex = 0; path = EkkoMonitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000006 /* AuthBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthBackend.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A30000000000000000000001 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A30000000000000000000001 /* App Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A30000000000000000000002 /* Monitor Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A40000000000000000000001 = {
-			isa = PBXGroup;
-			children = (
-				A40000000000000000000002 /* Ekko */,
-				A40000000000000000000003 /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		A40000000000000000000002 /* Ekko */ = {
-			isa = PBXGroup;
-			children = (A20000000000000000000001 /* EkkoApp.swift */, A20000000000000000000003 /* AuthBackend.swift */,);
-			path = Ekko;
-			sourceTree = "<group>";
-		};
-		A40000000000000000000003 /* Products */ = {
-			isa = PBXGroup;
-			children = (A20000000000000000000002 /* Ekko.app */,);
-			name = Products;
-			sourceTree = "<group>";
-		};
+		A40000000000000000000001 = {isa = PBXGroup; children = (A40000000000000000000002 /* Ekko */, A40000000000000000000004 /* Monitor Extension */, A40000000000000000000003 /* Products */,); sourceTree = "<group>"; };
+		A40000000000000000000002 /* Ekko */ = {isa = PBXGroup; children = (A20000000000000000000001 /* EkkoApp.swift */, A20000000000000000000003 /* ScreenTimeSupport.swift */, A20000000000000000000006 /* AuthBackend.swift */,); path = Ekko; sourceTree = "<group>"; };
+		A40000000000000000000003 /* Products */ = {isa = PBXGroup; children = (A20000000000000000000002 /* Ekko.app */, A20000000000000000000005 /* EkkoMonitorExtension.appex */,); name = Products; sourceTree = "<group>"; };
+		A40000000000000000000004 /* Monitor Extension */ = {isa = PBXGroup; children = (A20000000000000000000004 /* DeviceActivityMonitorExtension.swift */,); path = EkkoMonitorExtension; sourceTree = "<group>"; };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A50000000000000000000001 /* Ekko */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A90000000000000000000002 /* Build configuration list for PBXNativeTarget "Ekko" */;
-			buildPhases = (
-				A30000000000000000000001 /* Frameworks */,
-				A60000000000000000000001 /* Sources */,
-			);
-			buildRules = ();
-			dependencies = ();
-			name = Ekko;
-			productName = Ekko;
-			productReference = A20000000000000000000002 /* Ekko.app */;
-			productType = "com.apple.product-type.application";
-		};
+		A50000000000000000000001 /* Ekko */ = {isa = PBXNativeTarget; buildConfigurationList = A90000000000000000000002 /* Ekko Build Configurations */; buildPhases = (A30000000000000000000001 /* App Frameworks */, A60000000000000000000001 /* App Sources */, A60000000000000000000003 /* Embed App Extensions */,); buildRules = (); dependencies = (A50000000000000000000004 /* Monitor extension dependency */,); name = Ekko; productName = Ekko; productReference = A20000000000000000000002 /* Ekko.app */; productType = "com.apple.product-type.application"; };
+		A50000000000000000000002 /* EkkoMonitorExtension */ = {isa = PBXNativeTarget; buildConfigurationList = A90000000000000000000003 /* Monitor Build Configurations */; buildPhases = (A30000000000000000000002 /* Monitor Frameworks */, A60000000000000000000004 /* Monitor Sources */,); buildRules = (); dependencies = (); name = EkkoMonitorExtension; productName = EkkoMonitorExtension; productReference = A20000000000000000000005 /* EkkoMonitorExtension.appex */; productType = "com.apple.product-type.app-extension"; };
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		A70000000000000000000001 /* Project object */ = {
-			isa = PBXProject;
-			attributes = {BuildIndependentTargetsInParallel = 1; LastUpgradeCheck = 1600; TargetAttributes = {A50000000000000000000001 = {CreatedOnToolsVersion = 16.0; }; }; };
-			buildConfigurationList = A90000000000000000000001 /* Build configuration list for PBXProject "Ekko" */;
-			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = en;
-			hasScannedForEncodings = 0;
-			knownRegions = (en, Base,);
-			mainGroup = A40000000000000000000001;
-			productRefGroup = A40000000000000000000003 /* Products */;
-			projectDirPath = "";
-			projectRoot = "";
-			targets = (A50000000000000000000001 /* Ekko */,);
-		};
+		A70000000000000000000001 /* Project object */ = {isa = PBXProject; attributes = {BuildIndependentTargetsInParallel = 1; LastUpgradeCheck = 1600; TargetAttributes = {A50000000000000000000001 = {CreatedOnToolsVersion = 16.0; SystemCapabilities = {com.apple.ApplicationGroups = {enabled = 1; }; com.apple.FamilyControls = {enabled = 1; }; }; }; A50000000000000000000002 = {CreatedOnToolsVersion = 27.2; SystemCapabilities = {com.apple.ApplicationGroups = {enabled = 1; }; com.apple.FamilyControls = {enabled = 1; }; }; }; }; }; buildConfigurationList = A90000000000000000000001 /* Project Build Configurations */; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base,); mainGroup = A40000000000000000000001; productRefGroup = A40000000000000000000003 /* Products */; projectDirPath = ""; projectRoot = ""; targets = (A50000000000000000000001 /* Ekko */, A50000000000000000000002 /* EkkoMonitorExtension */,); };
 /* End PBXProject section */
 
+/* Begin PBXTargetDependency section */
+		A50000000000000000000004 /* Monitor extension dependency */ = {isa = PBXTargetDependency; target = A50000000000000000000002 /* EkkoMonitorExtension */; targetProxy = A50000000000000000000003 /* Monitor extension proxy */; };
+/* End PBXTargetDependency section */
+
 /* Begin PBXSourcesBuildPhase section */
-		A60000000000000000000001 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (A10000000000000000000001 /* EkkoApp.swift in Sources */, A10000000000000000000002 /* AuthBackend.swift in Sources */,);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
+		A60000000000000000000001 /* App Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001 /* EkkoApp.swift in Sources */, A10000000000000000000002 /* ScreenTimeSupport.swift in App Sources */, A10000000000000000000006 /* AuthBackend.swift in Sources */,); runOnlyForDeploymentPostprocessing = 0; };
+		A60000000000000000000004 /* Monitor Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000003 /* DeviceActivityMonitorExtension.swift in Sources */, A10000000000000000000004 /* ScreenTimeSupport.swift in Monitor Sources */,); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
 		A80000000000000000000001 /* Debug project */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; COPY_PHASE_STRIP = NO; DEBUG_INFORMATION_FORMAT = dwarf; ENABLE_STRICT_OBJC_MSGSEND = YES; GCC_C_LANGUAGE_STANDARD = gnu17; GCC_OPTIMIZATION_LEVEL = 0; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SDKROOT = iphoneos; SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)"; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; }; name = Debug; };
-		A80000000000000000000002 /* Release project */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; COPY_PHASE_STRIP = NO; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; ENABLE_NS_ASSERTIONS = NO; ENABLE_STRICT_OBJC_MSGSEND = YES; GCC_C_LANGUAGE_STANDARD = gnu17; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SDKROOT = iphoneos; SWIFT_COMPILATION_MODE = wholemodule; SWIFT_OPTIMIZATION_LEVEL = "-O"; }; name = Release; };
-		A80000000000000000000003 /* Debug target */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; EK_APPLE_SIGN_IN_ENABLED = 0; EK_SUPABASE_PUBLISHABLE_KEY = ""; EK_SUPABASE_URL = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_EK_APPLE_SIGN_IN_ENABLED = "$(EK_APPLE_SIGN_IN_ENABLED)"; INFOPLIST_KEY_EK_SUPABASE_PUBLISHABLE_KEY = "$(EK_SUPABASE_PUBLISHABLE_KEY)"; INFOPLIST_KEY_EK_SUPABASE_URL = "$(EK_SUPABASE_URL)"; INFOPLIST_KEY_CFBundleDisplayName = ekko; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; PRODUCT_BUNDLE_IDENTIFIER = com.ekko.morning; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
-		A80000000000000000000004 /* Release target */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; EK_APPLE_SIGN_IN_ENABLED = 0; EK_SUPABASE_PUBLISHABLE_KEY = ""; EK_SUPABASE_URL = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_EK_APPLE_SIGN_IN_ENABLED = "$(EK_APPLE_SIGN_IN_ENABLED)"; INFOPLIST_KEY_EK_SUPABASE_PUBLISHABLE_KEY = "$(EK_SUPABASE_PUBLISHABLE_KEY)"; INFOPLIST_KEY_EK_SUPABASE_URL = "$(EK_SUPABASE_URL)"; INFOPLIST_KEY_CFBundleDisplayName = ekko; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; PRODUCT_BUNDLE_IDENTIFIER = com.ekko.morning; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
+		A80000000000000000000002 /* Release project */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; COPY_PHASE_STRIP = NO; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; ENABLE_NS_ASSERTIONS = NO; GCC_C_LANGUAGE_STANDARD = gnu17; IPHONEOS_DEPLOYMENT_TARGET = 16.0; SDKROOT = iphoneos; SWIFT_COMPILATION_MODE = wholemodule; SWIFT_OPTIMIZATION_LEVEL = "-O"; }; name = Release; };
+		A80000000000000000000003 /* Debug app */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_ENTITLEMENTS = Ekko/Ekko.entitlements; CODE_SIGN_STYLE = Automatic; EK_APPLE_SIGN_IN_ENABLED = 0; EK_SUPABASE_PUBLISHABLE_KEY = ""; EK_SUPABASE_URL = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_EK_APPLE_SIGN_IN_ENABLED = "$(EK_APPLE_SIGN_IN_ENABLED)"; INFOPLIST_KEY_EK_SUPABASE_PUBLISHABLE_KEY = "$(EK_SUPABASE_PUBLISHABLE_KEY)"; INFOPLIST_KEY_EK_SUPABASE_URL = "$(EK_SUPABASE_URL)"; INFOPLIST_KEY_CFBundleDisplayName = ekko; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; PRODUCT_BUNDLE_IDENTIFIER = com.ekko.morning; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
+		A80000000000000000000004 /* Release app */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_ENTITLEMENTS = Ekko/Ekko.entitlements; CODE_SIGN_STYLE = Automatic; EK_APPLE_SIGN_IN_ENABLED = 0; EK_SUPABASE_PUBLISHABLE_KEY = ""; EK_SUPABASE_URL = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_EK_APPLE_SIGN_IN_ENABLED = "$(EK_APPLE_SIGN_IN_ENABLED)"; INFOPLIST_KEY_EK_SUPABASE_PUBLISHABLE_KEY = "$(EK_SUPABASE_PUBLISHABLE_KEY)"; INFOPLIST_KEY_EK_SUPABASE_URL = "$(EK_SUPABASE_URL)"; INFOPLIST_KEY_CFBundleDisplayName = ekko; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; PRODUCT_BUNDLE_IDENTIFIER = com.ekko.morning; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
+		A80000000000000000000005 /* Debug monitor */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_ENTITLEMENTS = EkkoMonitorExtension/EkkoMonitorExtension.entitlements; CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.deviceactivity.monitor-extension"; INFOPLIST_KEY_NSExtension_NSExtensionPrincipalClass = "$(PRODUCT_MODULE_NAME).EkkoDeviceActivityMonitor"; IPHONEOS_DEPLOYMENT_TARGET = 16.0; PRODUCT_BUNDLE_IDENTIFIER = com.ekko.morning.monitor; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SKIP_INSTALL = YES; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
+		A80000000000000000000006 /* Release monitor */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_ENTITLEMENTS = EkkoMonitorExtension/EkkoMonitorExtension.entitlements; CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.deviceactivity.monitor-extension"; INFOPLIST_KEY_NSExtension_NSExtensionPrincipalClass = "$(PRODUCT_MODULE_NAME).EkkoDeviceActivityMonitor"; IPHONEOS_DEPLOYMENT_TARGET = 16.0; PRODUCT_BUNDLE_IDENTIFIER = com.ekko.morning.monitor; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SKIP_INSTALL = YES; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A90000000000000000000001 /* Build configuration list for PBXProject "Ekko" */ = {isa = XCConfigurationList; buildConfigurations = (A80000000000000000000001 /* Debug project */, A80000000000000000000002 /* Release project */,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-		A90000000000000000000002 /* Build configuration list for PBXNativeTarget "Ekko" */ = {isa = XCConfigurationList; buildConfigurations = (A80000000000000000000003 /* Debug target */, A80000000000000000000004 /* Release target */,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A90000000000000000000001 /* Project Build Configurations */ = {isa = XCConfigurationList; buildConfigurations = (A80000000000000000000001 /* Debug project */, A80000000000000000000002 /* Release project */,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A90000000000000000000002 /* Ekko Build Configurations */ = {isa = XCConfigurationList; buildConfigurations = (A80000000000000000000003 /* Debug app */, A80000000000000000000004 /* Release app */,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A90000000000000000000003 /* Monitor Build Configurations */ = {isa = XCConfigurationList; buildConfigurations = (A80000000000000000000005 /* Debug monitor */, A80000000000000000000006 /* Release monitor */,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 /* End XCConfigurationList section */
 	};
 	rootObject = A70000000000000000000001 /* Project object */;
