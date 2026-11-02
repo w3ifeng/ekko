@@ -9,14 +9,15 @@ This note records the latest captain direction for the morning UX prototype. It 
 - **Short unlock:** Allow one 10-minute unlock per EKKO day. It does not break the streak.
 - **Full-day Skip:** Let the user unlock their selected apps for the rest of the day. Skip ends the current streak.
 - **Incomplete mornings:** If the required steps remain incomplete all day, keep the selected apps paused and preserve the streak. Do not automatically unlock apps or break the streak. Only finishing the required steps or choosing Skip changes that state.
-- **Friends and streaks:** Show friends who completed the daily task, with each friend’s current streak beside their name. Completing the required routine on a day builds the streak; choosing a full-day Skip ends it.
+- **Friends and streaks:** Show opted-in friends who completed on their own local date, with each friend’s current streak beside their name. Completing the required routine on a day builds the streak; choosing a full-day Skip ends it. A date with no app activity creates no outcome and leaves the streak unchanged. A friend feed must not expose skipped status or routine, schedule, app-selection, app-blocking, or usage details.
 - **Proof:** No proof. Routine completion is self-reported; checklist taps do not verify that an activity happened.
 - **Pricing:** EKKO is free for now.
 - **Enforcement:** The app selection screen shows the user's intended choice of apps. Do not claim iOS Screen Time or app-blocking enforcement has been verified or implemented.
 
 ## Open questions
 
-- What happens after an unplanned missed morning when the user did not deliberately choose a full-day skip?
 - What limits would apply to future iOS enforcement?
 
 The prototype uses illustrative screens and local-only demo state. It does not implement Screen Time controls, app blocking, a backend, or friend accounts.
+
+The Supabase database foundation is being prepared separately as local migrations. These files have not been applied to a database.
