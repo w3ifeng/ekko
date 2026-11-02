@@ -1,4 +1,6 @@
 import SwiftUI
+import AuthenticationServices
+import UIKit
 
 private enum EkkoPalette {
     static let paper = Color(hex: 0xF4F4EF)
@@ -52,17 +54,6 @@ private struct MorningApp: Identifiable {
     var selected: Bool
 }
 
-private struct Friend: Identifiable {
-    let id: String
-    let name: String
-    let initial: String
-    let tint: Color
-    let streak: Int
-    var done: Bool
-    let time: String?
-    var cheered = false
-}
-
 private enum EkkoTab: String, CaseIterable {
     case today = "Today", circle = "Circle", plan = "Plan"
     var symbol: String {
@@ -82,6 +73,7 @@ struct EkkoApp: App {
 }
 
 private struct EkkoRootView: View {
+    @StateObject private var backend = EkkoBackend()
     @State private var selectedTab: EkkoTab = .today
     @State private var hasSetUp = false
     @State private var showShield = false
@@ -93,7 +85,6 @@ private struct EkkoRootView: View {
     @State private var streak = 5
     @State private var streakEnded = false
     @State private var didWake = false
-    @State private var sharing = true
     @State private var notice: String?
     @AppStorage("ekko.peekUsedDay") private var peekUsedDay = ""
     @State private var steps = [
@@ -107,12 +98,6 @@ private struct EkkoRootView: View {
         MorningApp(id: "tiktok", name: "TikTok", glyph: "Tt", tint: EkkoPalette.sky, selected: true),
         MorningApp(id: "youtube", name: "YouTube", glyph: "Yt", tint: EkkoPalette.lilac, selected: false),
         MorningApp(id: "mail", name: "Mail", glyph: "Ma", tint: EkkoPalette.mint, selected: false)
-    ]
-    @State private var friends = [
-        Friend(id: "jamie", name: "Jamie", initial: "J", tint: EkkoPalette.clay, streak: 6, done: true, time: "6:31"),
-        Friend(id: "alex", name: "Alex", initial: "A", tint: EkkoPalette.sky, streak: 3, done: true, time: "6:48"),
-        Friend(id: "mo", name: "Mo", initial: "M", tint: EkkoPalette.lilac, streak: 11, done: false, time: nil),
-        Friend(id: "riya", name: "Riya", initial: "R", tint: EkkoPalette.mint, streak: 0, done: false, time: nil)
     ]
 
     private var requiredCount: Int { steps.filter(\.required).count }
@@ -135,7 +120,7 @@ private struct EkkoRootView: View {
                     showPeek = false
                 }
             } else if showCelebration {
-                UnlockedScreen(apps: apps, friends: friends, streak: streak) {
+                UnlockedScreen(apps: apps, streak: streak) {
                     showCelebration = false
                     selectedTab = .circle
                 } backToday: {
@@ -152,6 +137,7 @@ private struct EkkoRootView: View {
                                         guard allRequiredDone, !streakEnded, !didWake else { return }
                                         didWake = true
                                         streak += 1
+                                        Task { await backend.recordOutcome("completed") }
                                         showCelebration = true
                                     }, onAccess: {
                                         accessChoice = peekUsedToday ? "skip" : "peek"
@@ -161,7 +147,7 @@ private struct EkkoRootView: View {
                                         showPeek = false
                                     })
                     case .circle:
-                        CircleScreen(friends: $friends, sharing: $sharing) { toast("Cheer sent to \($0)") }
+                        CircleScreen(backend: backend)
                     case .plan:
                         PlanScreen(apps: $apps, steps: $steps, setup: false) {
                             selectedTab = .today
@@ -189,6 +175,7 @@ private struct EkkoRootView: View {
                 if choice == "skip" {
                     streakEnded = true
                     streak = 0
+                    Task { await backend.recordOutcome("skipped") }
                     toast("Skipped today. Fresh start tomorrow.")
                 } else {
                     peekUsedDay = ekkoDayKey()
@@ -381,68 +368,197 @@ private struct TodayScreen: View {
 }
 
 private struct CircleScreen: View {
-    @Binding var friends: [Friend]
-    @Binding var sharing: Bool
-    let onCheer: (String) -> Void
-    private var finished: [Int] { friends.indices.filter { friends[$0].done } }
-    private var resting: [Int] { friends.indices.filter { !friends[$0].done } }
+    @ObservedObject var backend: EkkoBackend
+    @State private var activePrompt: CirclePrompt?
+    @State private var showSignIn = false
+    @State private var groupName = "Morning circle"
+    @State private var invitationCode = ""
+    @State private var newInvitation: String?
+    @State private var displayName = ""
+
+    private var promptTitle: String {
+        switch activePrompt {
+        case .some(.create): return "Create a circle"
+        case .some(.join): return "Join a circle"
+        case .some(.editName): return "Your display name"
+        case .some(.invitation): return "Invitation code"
+        case .none: return ""
+        }
+    }
+    private var promptMessage: String {
+        switch activePrompt {
+        case .some(.create): return "You'll get an invitation code to share."
+        case .some(.join): return "Paste the one-time code from your friend."
+        case .some(.editName): return "Only your name and shared completions appear to opted-in friends."
+        case .some(.invitation): return newInvitation ?? ""
+        case .none: return ""
+        }
+    }
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 14) {
                 Text("YOUR CIRCLE").font(.system(size: 11, weight: .bold)).tracking(1.3).foregroundStyle(EkkoPalette.muted).padding(.top, 16)
-                Text("You’ve got company.").font(.system(size: 31, weight: .bold, design: .rounded)).tracking(-0.9).foregroundStyle(EkkoPalette.ink).padding(.top, 8)
-                Text("\(finished.count) of \(friends.count) friends are up and done.").font(.system(size: 15)).foregroundStyle(EkkoPalette.muted).padding(.top, 6).padding(.bottom, 20)
-                section("Up and done", rows: finished, done: true)
-                section("Still snoozing", rows: resting, done: false)
-                HStack(spacing: 12) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Share my mornings").font(.system(size: 14, weight: .bold)).foregroundStyle(EkkoPalette.mossDark)
-                        Text("Friends see if you finished and your streak. Never your apps or your list.").font(.system(size: 12)).foregroundStyle(EkkoPalette.secondary).fixedSize(horizontal: false, vertical: true)
+                Text("Mornings, together.").font(.system(size: 31, weight: .bold, design: .rounded)).tracking(-0.9).foregroundStyle(EkkoPalette.ink)
+                if !backend.isConfigured {
+                    Card { Label("Add your Supabase project URL and publishable key in the local build settings to enable friend sharing.", systemImage: "externaldrive").font(.system(size: 14)).foregroundStyle(EkkoPalette.secondary) }
+                } else if !backend.isSignedIn {
+                    Card {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Friend sharing is optional").font(.system(size: 17, weight: .bold)).foregroundStyle(EkkoPalette.ink)
+                            Text("Your routine stays on this device. Sign in only when you want to invite friends or share completed mornings.").font(.system(size: 14)).foregroundStyle(EkkoPalette.muted)
+                            Button("Sign in to your circle") { showSignIn = true }.buttonStyle(PrimaryActionButton())
+                        }
                     }
-                    Spacer(minLength: 0)
-                    Toggle("Share my mornings", isOn: $sharing).labelsHidden().tint(EkkoPalette.moss).accessibilityLabel("Share my mornings")
-                }.padding(15).background(EkkoPalette.mint, in: RoundedRectangle(cornerRadius: 18)).padding(.top, 2)
-                Button {} label: {
-                    Label("Invite a friend", systemImage: "person.badge.plus").font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(EkkoPalette.moss).frame(maxWidth: .infinity).frame(height: 50)
-                        .background(EkkoPalette.card, in: RoundedRectangle(cornerRadius: 15)).overlay(RoundedRectangle(cornerRadius: 15).stroke(EkkoPalette.border, lineWidth: 1))
-                }.buttonStyle(.plain).padding(.top, 14).padding(.bottom, 25)
-            }.padding(.horizontal, 18)
-        }.background(EkkoPalette.paper.ignoresSafeArea())
-    }
-
-    @ViewBuilder private func section(_ title: String, rows: [Int], done: Bool) -> some View {
-        Text(title).font(.system(size: 12, weight: .medium)).foregroundStyle(EkkoPalette.muted).padding(.leading, 2).padding(.bottom, 8)
-        Card {
-            if rows.isEmpty {
-                Text(done ? "No one's up just yet." : "Everyone's up. Nice work.").font(.system(size: 13)).foregroundStyle(EkkoPalette.muted).padding(.vertical, 12)
-            } else {
-                VStack(spacing: 0) {
-                    ForEach(rows, id: \.self) { friendIndex in
-                        HStack(spacing: 11) {
-                            Circle().fill(friends[friendIndex].tint).frame(width: 40, height: 40)
-                                .overlay(Text(friends[friendIndex].initial).font(.system(size: 15, weight: .bold)).foregroundStyle(EkkoPalette.ink))
+                } else {
+                    if let profile = backend.profile {
+                        HStack {
                             VStack(alignment: .leading, spacing: 3) {
-                                Text(friends[friendIndex].name).font(.system(size: 14, weight: .semibold)).foregroundStyle(EkkoPalette.ink)
-                                Text(done ? "Done at \(friends[friendIndex].time ?? "6:30")" : "Hasn’t started yet").font(.system(size: 11)).foregroundStyle(EkkoPalette.muted)
+                                Text("Your profile").font(.system(size: 12, weight: .medium)).foregroundStyle(EkkoPalette.muted)
+                                Text(profile.displayName).font(.system(size: 15, weight: .semibold)).foregroundStyle(EkkoPalette.ink)
                             }
-                            Spacer(minLength: 3)
-                            Label("\(friends[friendIndex].streak)", systemImage: "flame.fill").font(.system(size: 11, weight: .bold)).foregroundStyle(EkkoPalette.ember)
-                            Button {
-                                friends[friendIndex].cheered.toggle()
-                                if friends[friendIndex].cheered { onCheer(friends[friendIndex].name) }
-                            } label: {
-                                Image(systemName: friends[friendIndex].cheered ? "heart.fill" : "heart")
-                                    .font(.system(size: 15, weight: .medium)).foregroundStyle(friends[friendIndex].cheered ? EkkoPalette.ember : EkkoPalette.muted)
-                                    .frame(width: 38, height: 38).contentShape(Rectangle())
-                            }.buttonStyle(.plain).accessibilityLabel("Encourage \(friends[friendIndex].name)")
-                        }.padding(.vertical, 9)
-                        if friendIndex != rows.last { Divider().overlay(EkkoPalette.border).padding(.leading, 51) }
+                            Spacer()
+                            Button("Edit") { displayName = profile.displayName; activePrompt = .editName }
+                                .font(.system(size: 13, weight: .semibold)).foregroundStyle(EkkoPalette.moss)
+                        }.padding(14).background(EkkoPalette.card, in: RoundedRectangle(cornerRadius: 15))
+                        HStack(spacing: 12) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Share my mornings").font(.system(size: 14, weight: .bold)).foregroundStyle(EkkoPalette.mossDark)
+                                Text("Friends see completed mornings and your current streak, never your apps or routine.").font(.system(size: 12)).foregroundStyle(EkkoPalette.secondary)
+                            }
+                            Spacer(minLength: 0)
+                            Toggle("Share my mornings", isOn: Binding(get: { profile.shareWithFriends }, set: { value in Task { await backend.setSharing(value) } }))
+                                .labelsHidden().tint(EkkoPalette.moss).accessibilityLabel("Share my mornings")
+                        }.padding(15).background(EkkoPalette.mint, in: RoundedRectangle(cornerRadius: 18))
                     }
+                    if backend.friends.isEmpty {
+                        Card {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(backend.groups.isEmpty ? "Your circle is empty" : "No shared completions yet")
+                                    .font(.system(size: 17, weight: .bold)).foregroundStyle(EkkoPalette.ink)
+                                Text(backend.groups.isEmpty ? "Create a circle and invite someone, or join with an invitation code." : "Friends appear here after they opt in and complete today's routine. Unopened days stay private and neutral.")
+                                    .font(.system(size: 14)).foregroundStyle(EkkoPalette.muted)
+                            }
+                        }
+                    } else {
+                        Text("COMPLETED TODAY").font(.system(size: 11, weight: .bold)).tracking(1).foregroundStyle(EkkoPalette.muted)
+                        Card {
+                            VStack(spacing: 0) {
+                                ForEach(backend.friends.indices, id: \.self) { index in
+                                    let friend = backend.friends[index]
+                                    HStack(spacing: 11) {
+                                        Circle().fill(EkkoPalette.mint).frame(width: 40, height: 40).overlay(Text(String(friend.displayName.prefix(1)).uppercased()).font(.system(size: 15, weight: .bold)).foregroundStyle(EkkoPalette.ink))
+                                        Text(friend.displayName).font(.system(size: 14, weight: .semibold)).foregroundStyle(EkkoPalette.ink)
+                                        Spacer()
+                                        Label("\(friend.currentStreak)", systemImage: "flame.fill").font(.system(size: 12, weight: .bold)).foregroundStyle(EkkoPalette.ember)
+                                    }.padding(.vertical, 9)
+                                }
+                            }
+                        }
+                    }
+                    HStack(spacing: 10) {
+                        Button { activePrompt = .create } label: { Label("Create & invite", systemImage: "person.badge.plus") }.buttonStyle(SecondaryActionButton())
+                        Button { activePrompt = .join } label: { Label("Join with code", systemImage: "key.horizontal") }.buttonStyle(SecondaryActionButton())
+                    }
+                    ForEach(backend.groups) { group in
+                        HStack {
+                            Label(group.name, systemImage: "person.2.fill").font(.system(size: 14, weight: .semibold)).foregroundStyle(EkkoPalette.ink)
+                            Spacer()
+                            Button("New code") {
+                                Task {
+                                    newInvitation = await backend.makeInvitation(for: group.id)
+                                    if newInvitation != nil { activePrompt = .invitation }
+                                }
+                            }.font(.system(size: 13, weight: .semibold)).foregroundStyle(EkkoPalette.moss)
+                        }.padding(14).background(EkkoPalette.card, in: RoundedRectangle(cornerRadius: 15))
+                    }
+                    Button("Sign out") { Task { await backend.signOut() } }.font(.system(size: 13, weight: .medium)).foregroundStyle(EkkoPalette.muted).padding(.vertical, 8)
                 }
+                if let message = backend.infoMessage { Text(message).font(.system(size: 13)).foregroundStyle(EkkoPalette.moss) }
+                if let message = backend.errorMessage { Text(message).font(.system(size: 13)).foregroundStyle(Color(hex: 0xB4483A)) }
+                if backend.isLoading { ProgressView().tint(EkkoPalette.moss).frame(maxWidth: .infinity).padding() }
+            }.padding(.horizontal, 18).padding(.bottom, 24)
+        }
+        .background(EkkoPalette.paper.ignoresSafeArea())
+        .sheet(isPresented: $showSignIn) { EmailSignInScreen(backend: backend) }
+        .alert(promptTitle, isPresented: Binding(get: { activePrompt != nil }, set: { if !$0 { activePrompt = nil } })) {
+            switch activePrompt {
+            case .some(.create):
+                TextField("Circle name", text: $groupName)
+                Button("Cancel", role: .cancel) { activePrompt = nil }
+                Button("Create") { activePrompt = nil; Task { await backend.createGroup(named: groupName) } }
+            case .some(.join):
+                TextField("Invitation code", text: $invitationCode)
+                Button("Cancel", role: .cancel) { activePrompt = nil }
+                Button("Join") { activePrompt = nil; Task { await backend.joinGroup(using: invitationCode) } }
+            case .some(.editName):
+                TextField("Name friends will see", text: $displayName)
+                Button("Cancel", role: .cancel) { activePrompt = nil }
+                Button("Save") { activePrompt = nil; Task { await backend.updateDisplayName(displayName) } }
+            case .some(.invitation):
+                Button("Copy code") {
+                    if let newInvitation { UIPasteboard.general.string = newInvitation }
+                    newInvitation = nil
+                    activePrompt = nil
+                }
+                Button("Done", role: .cancel) { newInvitation = nil; activePrompt = nil }
+            case .none:
+                Button("Done", role: .cancel) { }
             }
-        }.padding(.bottom, 16)
+        } message: { Text(promptMessage) }
+    }
+}
+
+private enum CirclePrompt { case create, join, editName, invitation }
+
+private struct EmailSignInScreen: View {
+    @ObservedObject var backend: EkkoBackend
+    @Environment(\.dismiss) private var dismiss
+    @State private var email = ""
+    @State private var code = ""
+    @State private var codeRequested = false
+    @State private var showAppleSignIn = (Bundle.main.object(forInfoDictionaryKey: "EK_APPLE_SIGN_IN_ENABLED") as? Bool)
+        ?? ((Bundle.main.object(forInfoDictionaryKey: "EK_APPLE_SIGN_IN_ENABLED") as? String).map { ["1", "YES", "true"].contains($0) } ?? false)
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 14) {
+                Text("Your circle starts here").font(.system(size: 28, weight: .bold, design: .rounded)).foregroundStyle(EkkoPalette.ink)
+                Text(codeRequested ? "Enter the one-time code from your email." : "Sign in with an email code. Your routine stays local either way.")
+                    .font(.system(size: 14)).foregroundStyle(EkkoPalette.muted)
+                TextField("Email address", text: $email).textContentType(.emailAddress).keyboardType(.emailAddress).textInputAutocapitalization(.never).autocorrectionDisabled().padding(14).background(.white, in: RoundedRectangle(cornerRadius: 13))
+                if codeRequested { TextField("One-time code", text: $code).keyboardType(.numberPad).textContentType(.oneTimeCode).padding(14).background(.white, in: RoundedRectangle(cornerRadius: 13)) }
+                Button(codeRequested ? "Verify code" : "Send code") {
+                    Task {
+                        if codeRequested { await backend.verifyEmailCode(email: email, code: code); if backend.isSignedIn { dismiss() } }
+                        else { await backend.sendEmailCode(to: email); codeRequested = backend.infoMessage != nil }
+                    }
+                }.buttonStyle(PrimaryActionButton()).disabled(email.isEmpty || (codeRequested && code.isEmpty))
+                if showAppleSignIn {
+                    SignInWithAppleButton(.signIn, onRequest: backend.prepareAppleRequest, onCompletion: { result in
+                        Task { await backend.signInWithApple(result); if backend.isSignedIn { dismiss() } }
+                    }).signInWithAppleButtonStyle(.black).frame(height: 48)
+                }
+                if let message = backend.infoMessage { Text(message).font(.system(size: 13)).foregroundStyle(EkkoPalette.moss) }
+                if let message = backend.errorMessage { Text(message).font(.system(size: 13)).foregroundStyle(Color(hex: 0xB4483A)) }
+                Spacer()
+            }.padding(22).background(EkkoPalette.paper.ignoresSafeArea())
+                .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Close") { dismiss() } } }
+        }
+    }
+}
+
+private struct PrimaryActionButton: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label.font(.system(size: 15, weight: .semibold)).foregroundStyle(.white)
+            .frame(maxWidth: .infinity).frame(height: 50).background(EkkoPalette.moss.opacity(configuration.isPressed ? 0.78 : 1), in: RoundedRectangle(cornerRadius: 14))
+    }
+}
+private struct SecondaryActionButton: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label.font(.system(size: 13, weight: .semibold)).foregroundStyle(EkkoPalette.moss)
+            .frame(maxWidth: .infinity).frame(height: 48).background(EkkoPalette.card, in: RoundedRectangle(cornerRadius: 14))
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(EkkoPalette.border, lineWidth: 1)).opacity(configuration.isPressed ? 0.7 : 1)
     }
 }
 
@@ -519,7 +635,6 @@ private struct ShieldPreview: View {
 
 private struct UnlockedScreen: View {
     let apps: [MorningApp]
-    let friends: [Friend]
     let streak: Int
     let onCircle: () -> Void
     let backToday: () -> Void
@@ -546,8 +661,8 @@ private struct UnlockedScreen: View {
                     }
                     Button(action: onCircle) {
                         HStack(spacing: 11) {
-                            HStack(spacing: -7) { ForEach(friends.filter(\.done).prefix(3)) { friend in Circle().fill(friend.tint).frame(width: 32, height: 32).overlay(Text(friend.initial).font(.system(size: 12, weight: .bold))).overlay(Circle().stroke(.white, lineWidth: 2)) } }
-                            Text("\(friends.filter(\.done).map(\.name).joined(separator: " & ")) are up too.").font(.system(size: 13)).foregroundStyle(EkkoPalette.ink)
+                            Image(systemName: "sun.max.fill").foregroundStyle(EkkoPalette.ember)
+                            Text("Your morning is yours. Check your circle for friends who shared today.").font(.system(size: 13)).foregroundStyle(EkkoPalette.ink)
                             Spacer()
                             Image(systemName: "chevron.right").font(.system(size: 12, weight: .bold)).foregroundStyle(EkkoPalette.muted)
                         }.padding(14).background(EkkoPalette.card, in: RoundedRectangle(cornerRadius: 18)).overlay(RoundedRectangle(cornerRadius: 18).stroke(EkkoPalette.border, lineWidth: 1))
