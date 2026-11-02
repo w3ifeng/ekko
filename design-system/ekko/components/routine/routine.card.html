@@ -1,0 +1,20 @@
+<!-- @dsCard group="Components" viewport="700x400" name="Routine" subtitle="TaskRow, AppRow, FriendRow, ChoiceCard" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{background:var(--surface-screen);padding:20px;box-sizing:border-box}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.col{display:flex;flex-direction:column;gap:14px}.lbl{font:var(--type-eyebrow);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--text-3);width:90px;flex:none}</style>
+</head><body><div id="root"></div>
+<script type="text/babel">
+const NS = window.EkkoDesignSystem_6a2b75;
+const { TaskRow, AppRow, FriendRow, ChoiceCard, Card } = NS;
+function Demo(){const [d,setD]=React.useState({a:true,b:false,c:false});const [p,setP]=React.useState({ig:true,tt:true});const [ch,setCh]=React.useState('peek');const [cheer,setCheer]=React.useState(false);
+return <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+<div className="col"><Card padding="4px 16px"><TaskRow icon="droplets" title="Brush teeth" meta="about 2 min" done={d.a} onToggle={v=>setD({...d,a:v})}/><TaskRow icon="shirt" title="Get ready" meta="take your time" done={d.b} onToggle={v=>setD({...d,b:v})}/><TaskRow icon="sparkles" title="Skincare" required={false} done={d.c} onToggle={v=>setD({...d,c:v})} last/></Card>
+<Card padding="4px 16px"><AppRow name="Instagram" glyph="Ig" tone="clay" paused={p.ig} onChange={v=>setP({...p,ig:v})}/><AppRow name="TikTok" glyph="Tt" tone="slate" paused={p.tt} onChange={v=>setP({...p,tt:v})} last/></Card></div>
+<div className="col"><Card padding="4px 16px"><FriendRow name="Jamie" initial="J" tone="clay" streak={6} done cheered={cheer} onCheer={()=>setCheer(!cheer)}/><FriendRow name="Alex" initial="A" tone="sky" streak={3} done onCheer={()=>{}}/><FriendRow name="Mo" initial="M" tone="lilac" streak={11} last/></Card>
+<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}><ChoiceCard icon="timer" title="5-min peek" description="Apps nap again after" selected={ch==='peek'} onClick={()=>setCh('peek')}/><ChoiceCard icon="flame-kindling" tone="danger" title="Skip today" description="Ends your streak" selected={ch==='skip'} onClick={()=>setCh('skip')}/></div></div>
+</div>}
+ReactDOM.createRoot(root).render(<Demo/>);
+</script></body></html>
